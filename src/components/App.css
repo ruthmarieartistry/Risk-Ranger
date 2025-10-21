@@ -18,9 +18,8 @@ body {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 16px 16px 0 16px;
+  padding: 16px;
   background: #f9fafb;
-  min-height: 100vh;
 }
 
 /* Match NeonearBy max-width of 1280px (max-w-7xl in Tailwind) */
