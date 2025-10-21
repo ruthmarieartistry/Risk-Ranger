@@ -1254,20 +1254,7 @@ function App() {
               <button onClick={() => setShowMethod(false)} className="modal-close">×</button>
             </div>
             <div className="modal-body">
-              <p className="modal-intro">Our surrogacy risk assessment tool uses evidence-based guidelines and data from authoritative medical sources.</p>
-
-              <div className="modal-section">
-                <h3 style={{ color: darkTeal }}>Data Sources</h3>
-                <ul>
-                  <li><strong>ASRM (American Society for Reproductive Medicine):</strong> 2022 Guidelines for Gestational Carriers - standard obstetric terminology and surrogacy-specific criteria</li>
-                  <li><strong>CDC (Centers for Disease Control and Prevention):</strong> Maternal health conditions, chronic conditions (anemia, anxiety, depression, diabetes, hypertension), infectious diseases (UTI, HIV, STI/STD, COVID-19), pregnancy outcomes</li>
-                  <li><strong>March of Dimes:</strong> Chronic health conditions affecting pregnancy including autoimmune diseases (lupus, MS, RA, IBD), cardiovascular/pulmonary conditions, endocrine disorders, mental health conditions</li>
-                  <li><strong>Blue Cross Blue Shield:</strong> Preterm labor signs and symptoms, gestational diabetes management, pregnancy-induced hypertension, placental complications</li>
-                  <li><strong>Stanford Children's Health:</strong> Prenatal testing terminology, fetal development and monitoring, pregnancy complications (HELLP syndrome, IUGR), blood/lab testing, Rh disease</li>
-                  <li><strong>Johns Hopkins Medicine:</strong> Amniotic fluid complications, bleeding complications, ectopic pregnancy, miscarriage and fetal loss, placental complications, preeclampsia/eclampsia</li>
-                  <li><strong>Real Clinic Standards:</strong> San Diego Fertility Center (SDFC) and industry-standard IVF clinic acceptance criteria</li>
-                </ul>
-              </div>
+              <p className="modal-intro">Risk Ranger employs a sophisticated, multi-layered assessment system that combines evidence-based clinical guidelines, custom-built medical text parsing, and deterministic scoring algorithms. Our approach prioritizes accuracy and clinical validity over simplistic AI-generated answers.</p>
 
               <div className="modal-section">
                 <h3 style={{ color: darkTeal }}>Assessment Methodology</h3>
@@ -1278,6 +1265,18 @@ function App() {
                   <li><strong>Combination Penalties:</strong> Multiple risk factors compound exponentially, especially at strict clinics</li>
                   <li><strong>Condition-Specific Scoring:</strong> Individual medical conditions weighted by severity and recurrence risk</li>
                 </ul>
+              </div>
+
+              <div className="modal-section">
+                <h3 style={{ color: darkTeal }}>Text Parsing - Multi-Layered Approach</h3>
+                <p>Our system employs a <strong>cascading three-tier extraction process</strong> designed specifically for medical record analysis:</p>
+                <ul>
+                  <li><strong>Primary Layer - Structured Pattern Recognition:</strong> Custom-built regex patterns recognize 400+ medical terms, standard abbreviations (G3P2, SVD, C/S, VBAC), and pregnancy history notation. This deterministic parser handles the majority of medical records efficiently and accurately.</li>
+                  <li><strong>Secondary Layer - Medical Glossary Mapping:</strong> When structured patterns don't match, the system cross-references a curated medical glossary built from CDC, ASRM, March of Dimes, and clinical sources. This layer maps natural language descriptions to standardized medical conditions.</li>
+                  <li><strong>Tertiary Layer - Specialized Medical AI (Optional):</strong> For complex narrative medical records that resist structured parsing, users can opt into AI analysis. This layer uses language models with medical domain fine-tuning to extract conditions from discharge summaries and clinical notes. The AI intelligently groups related symptoms (e.g., "hyperemesis + PICC line + TPN + hospitalization" = 1 severe hyperemesis episode) and distinguishes pregnancy-induced vs chronic conditions.</li>
+                  <li><strong>Scoring Engine - 100% Deterministic:</strong> Regardless of extraction method, all risk scoring uses hard-coded clinical rules. AI is never used for decision-making—only for text extraction when simpler methods fail.</li>
+                </ul>
+                <p><strong>Why this architecture?</strong> Most medical records can be parsed with fast, reliable pattern matching. The medical glossary handles edge cases with natural language descriptions. AI is reserved as a final option for truly complex narrative records, ensuring specialized medical language understanding without relying on general-purpose chatbots. This approach combines speed, accuracy, and clinical specificity.</p>
               </div>
 
               <div className="modal-section">
@@ -1293,15 +1292,16 @@ function App() {
               </div>
 
               <div className="modal-section">
-                <h3 style={{ color: darkTeal }}>Text Parsing - Multi-Layered Approach</h3>
-                <p>Our system employs a <strong>cascading three-tier extraction process</strong> designed specifically for medical record analysis:</p>
+                <h3 style={{ color: darkTeal }}>Data Sources</h3>
                 <ul>
-                  <li><strong>Primary Layer - Structured Pattern Recognition:</strong> Custom-built regex patterns recognize 400+ medical terms, standard abbreviations (G3P2, SVD, C/S, VBAC), and pregnancy history notation. This deterministic parser handles the majority of medical records efficiently and accurately.</li>
-                  <li><strong>Secondary Layer - Medical Glossary Mapping:</strong> When structured patterns don't match, the system cross-references a curated medical glossary built from CDC, ASRM, March of Dimes, and clinical sources. This layer maps natural language descriptions to standardized medical conditions.</li>
-                  <li><strong>Tertiary Layer - Specialized Medical AI (Optional):</strong> For complex narrative medical records that resist structured parsing, users can opt into AI analysis. This layer uses language models with medical domain fine-tuning to extract conditions from discharge summaries and clinical notes. The AI intelligently groups related symptoms (e.g., "hyperemesis + PICC line + TPN + hospitalization" = 1 severe hyperemesis episode) and distinguishes pregnancy-induced vs chronic conditions.</li>
-                  <li><strong>Scoring Engine - 100% Deterministic:</strong> Regardless of extraction method, all risk scoring uses hard-coded clinical rules. AI is never used for decision-making—only for text extraction when simpler methods fail.</li>
+                  <li><strong>ASRM (American Society for Reproductive Medicine):</strong> 2022 Guidelines for Gestational Carriers - standard obstetric terminology and surrogacy-specific criteria</li>
+                  <li><strong>CDC (Centers for Disease Control and Prevention):</strong> Maternal health conditions, chronic conditions (anemia, anxiety, depression, diabetes, hypertension), infectious diseases (UTI, HIV, STI/STD, COVID-19), pregnancy outcomes</li>
+                  <li><strong>March of Dimes:</strong> Chronic health conditions affecting pregnancy including autoimmune diseases (lupus, MS, RA, IBD), cardiovascular/pulmonary conditions, endocrine disorders, mental health conditions</li>
+                  <li><strong>Blue Cross Blue Shield:</strong> Preterm labor signs and symptoms, gestational diabetes management, pregnancy-induced hypertension, placental complications</li>
+                  <li><strong>Stanford Children's Health:</strong> Prenatal testing terminology, fetal development and monitoring, pregnancy complications (HELLP syndrome, IUGR), blood/lab testing, Rh disease</li>
+                  <li><strong>Johns Hopkins Medicine:</strong> Amniotic fluid complications, bleeding complications, ectopic pregnancy, miscarriage and fetal loss, placental complications, preeclampsia/eclampsia</li>
+                  <li><strong>Real Clinic Standards:</strong> San Diego Fertility Center (SDFC) and industry-standard IVF clinic acceptance criteria</li>
                 </ul>
-                <p><strong>Why this architecture?</strong> Most medical records can be parsed with fast, reliable pattern matching. The medical glossary handles edge cases with natural language descriptions. AI is reserved as a final option for truly complex narrative records, ensuring specialized medical language understanding without relying on general-purpose chatbots. This approach combines speed, accuracy, and clinical specificity.</p>
               </div>
 
               <div className="modal-section">
