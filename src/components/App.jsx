@@ -737,11 +737,24 @@ function App() {
 
           <div className="input-section">
             <div className="text-input-section">
-              <h2>Upload Medical Record or Enter Description</h2>
-              <p className="helper-text">
-                <strong>Option 1: Upload a medical record</strong> (PDF, DOC, DOCX, TXT) - will be analyzed automatically.<br/>
-                <strong>Option 2: Type/paste a description</strong> below.
-              </p>
+              {/* Section Header - matches NeoNearBy style */}
+              <div style={{
+                background: '#7d2431',
+                color: 'white',
+                padding: '12px 16px',
+                borderRadius: '8px',
+                marginBottom: '16px',
+                display: 'flex',
+                alignItems: 'center',
+                gap: '10px',
+                fontSize: '16px',
+                fontWeight: '600'
+              }}>
+                <svg style={{ width: '20px', height: '20px' }} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" />
+                </svg>
+                Analyze Pregnancy Risks
+              </div>
 
               {/* Demographics Section */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px', marginBottom: '20px' }}>
