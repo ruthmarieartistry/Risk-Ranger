@@ -735,7 +735,7 @@ function App() {
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px', marginBottom: '20px' }}>
                 <div>
                   <label htmlFor="candidate-name" style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '6px' }}>
-                    Candidate Name
+                    Candidate Name <span style={{ fontWeight: 'normal', color: '#9ca3af', fontSize: '12px' }}>(optional)</span>
                   </label>
                   <input
                     type="text"
@@ -748,7 +748,7 @@ function App() {
                 </div>
                 <div>
                   <label htmlFor="candidate-age" style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '6px' }}>
-                    Age
+                    Age <span style={{ fontWeight: 'normal', color: '#9ca3af', fontSize: '12px' }}>(optional)</span>
                   </label>
                   <input
                     type="number"
@@ -761,7 +761,7 @@ function App() {
                 </div>
                 <div>
                   <label htmlFor="candidate-bmi" style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '6px' }}>
-                    BMI
+                    BMI <span style={{ fontWeight: 'normal', color: '#9ca3af', fontSize: '12px' }}>(optional)</span>
                   </label>
                   <input
                     type="number"
