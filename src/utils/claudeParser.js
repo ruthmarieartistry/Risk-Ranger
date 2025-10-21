@@ -109,15 +109,14 @@ Return a JSON object with this EXACT structure:
 Return ONLY the JSON object, no other text.`;
 
   try {
-    // Call Claude API directly from browser
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    // Call via Netlify Function (solves CORS)
+    const response = await fetch('/.netlify/functions/claude', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
+        apiKey: apiKey,
         model: 'claude-sonnet-4-20250514',
         max_tokens: 2000,
         messages: [
