@@ -497,10 +497,28 @@ function App() {
     // Add pregnancy-specific complications from cascading parser
     if (candidateData.pregnancySpecificComplications) {
       const complications = candidateData.pregnancySpecificComplications;
+
+      // Map abbreviations to full readable names
+      const abbreviationMap = {
+        'GDM': 'gestational diabetes',
+        'GD': 'gestational diabetes',
+        'PIH': 'pregnancy-induced hypertension',
+        'PE': 'preeclampsia',
+        'HELLP': 'HELLP syndrome',
+        'IUGR': 'intrauterine growth restriction',
+        'PPROM': 'preterm premature rupture of membranes',
+        'PROM': 'premature rupture of membranes',
+        'PTL': 'preterm labor',
+        'PTB': 'preterm birth',
+        'ICP': 'intrahepatic cholestasis of pregnancy',
+        'PPH': 'postpartum hemorrhage'
+      };
+
       Object.entries(complications).forEach(([category, data]) => {
         if (data.found && data.mentions && data.mentions.length > 0) {
-          // Use the first mention as the display name (e.g., "GDM", "PIH", "PPROM")
-          const conditionName = data.mentions[0];
+          const mention = data.mentions[0];
+          // Expand abbreviation to full name, or use as-is if not in map
+          const conditionName = abbreviationMap[mention.toUpperCase()] || mention;
           // Don't duplicate if already in allConditions
           if (!allConditions.some(c => c.toLowerCase().includes(conditionName.toLowerCase()))) {
             allConditions.push(conditionName);
