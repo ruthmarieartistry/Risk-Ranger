@@ -109,15 +109,16 @@ Return a JSON object with this EXACT structure:
 Return ONLY the JSON object, no other text.`;
 
   try {
-    // Call our local backend proxy instead of Claude API directly (fixes CORS)
-    const response = await fetch('http://localhost:3001/api/claude', {
+    // Call Claude API directly from browser
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'x-api-key': apiKey,
+        'anthropic-version': '2023-06-01'
       },
       body: JSON.stringify({
-        apiKey: apiKey,
-        model: 'claude-sonnet-4-5-20250929',
+        model: 'claude-sonnet-4-20250514',
         max_tokens: 2000,
         messages: [
           {
