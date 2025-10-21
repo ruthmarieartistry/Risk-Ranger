@@ -817,8 +817,8 @@ function App() {
                   value={textInput}
                   onChange={(e) => setTextInput(e.target.value)}
                   placeholder="Enter candidate information. Example:&#10;2 previous healthy pregnancies, vaginal deliveries, GD in last pregnancy, diet-controlled.&#10;Or paste medical records, lab results, etc. here."
-                  rows={5}
-                  style={{ width: '100%', padding: '8px', fontSize: '14px', border: '1px solid #d1d5db', borderRadius: '4px', fontFamily: 'inherit' }}
+                  rows={4}
+                  style={{ width: '100%', padding: '8px', fontSize: '13px', border: '1px solid #d1d5db', borderRadius: '4px', fontFamily: 'inherit' }}
                 />
               </div>
 

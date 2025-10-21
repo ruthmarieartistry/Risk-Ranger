@@ -38,14 +38,14 @@ body {
 
 /* Sidebar - left section inside the card */
 .sidebar {
-  width: 280px;
-  min-width: 280px;
-  background: #f9fafb;
-  padding: 20px 16px;
+  width: 240px;
+  min-width: 240px;
+  background: #ffffff;
+  padding: 16px 12px;
   border-right: 1px solid #e5e7eb;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
   flex-shrink: 0;
 }
 
@@ -171,7 +171,7 @@ body {
   background: #ffffff;
   border-radius: 0;
   box-shadow: none;
-  padding: 24px 20px 20px 20px;
+  padding: 16px;
 }
 
 /* Modal Styles */
