@@ -704,11 +704,8 @@ function App() {
               </div>
             )}
 
-            {/* Spacer to push buttons to bottom */}
-            <div style={{ flex: '1' }}></div>
-
             {/* Divider Line */}
-            <div style={{ width: '100%', height: '1px', backgroundColor: '#d1d5db', margin: '20px 0' }}></div>
+            <div style={{ width: '100%', height: '1px', backgroundColor: '#d1d5db', margin: '16px 0' }}></div>
 
             {/* Action Buttons */}
             <button onClick={handleTextAnalysis} className="sidebar-btn" style={{ backgroundColor: rubyRed }}>
