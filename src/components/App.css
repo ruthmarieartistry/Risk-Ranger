@@ -25,14 +25,14 @@ body {
 /* Single white card container - matches NeoNearBy */
 .app-container {
   display: flex;
-  max-width: 900px;
-  width: 900px;
-  height: 900px;
+  max-width: 100%;
+  width: 100%;
+  aspect-ratio: 1 / 1;
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: none;
-  overflow: hidden;
+  overflow: auto;
   gap: 0;
 }
 
