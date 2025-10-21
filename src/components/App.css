@@ -18,7 +18,7 @@ body {
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 16px;
+  padding: 0;
   background: #ffffff;
   min-height: 100vh;
 }
