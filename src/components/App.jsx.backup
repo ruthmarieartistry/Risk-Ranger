@@ -1,0 +1,851 @@
+import { useState } from 'react';
+import './App.css';
+import { parseTextInput, extractAndSummarize } from '../utils/textParser.js';
+import { performComprehensiveAssessment, RISK_LEVELS } from '../assessments/riskAssessment.js';
+import { getAcceptanceProbabilityDescription, ACCEPTANCE_LEVELS } from '../assessments/clinicTypeAssessment.js';
+import { getMFMReviewDescription, getMFMLikelihoodDescription, MFM_LIKELIHOOD } from '../assessments/mfmAssessment.js';
+import { MEDICAL_GLOSSARY, getGlossaryByCategory } from '../utils/medicalGlossary.js';
+import { parseDocument } from '../utils/simplePdfParser.js';
+
+function App() {
+  const [inputMode, setInputMode] = useState('text'); // 'text' or 'structured'
+  const [candidateName, setCandidateName] = useState('');
+  const [textInput, setTextInput] = useState('');
+  const [structuredInput, setStructuredInput] = useState('');
+  const [results, setResults] = useState(null);
+  const [extractionSummary, setExtractionSummary] = useState(null);
+  const [showGlossary, setShowGlossary] = useState(false);
+  const [showHowToUse, setShowHowToUse] = useState(false);
+  const [showMethod, setShowMethod] = useState(false);
+  const [uploadedFileName, setUploadedFileName] = useState('');
+
+  // Brand colors - Alcea Surrogacy Branding
+  const rubyRed = '#7d2431';
+  const darkGreen = '#217045';
+  const mustardYellow = '#e1b321';
+  const goldBrown = '#a5630b';
+  const darkTeal = '#005567';
+
+  const handleFileUpload = async (event) => {
+    console.log('handleFileUpload called');
+    const files = Array.from(event.target.files);
+    console.log('Files selected:', files.length);
+
+    if (files.length === 0) return;
+
+    if (files.length === 1) {
+      // Single file - process normally
+      const file = files[0];
+      setUploadedFileName(file.name);
+
+      try {
+        // Show loading state
+        setResults({ loading: true, fileName: file.name });
+
+        // Use the PDF parser for all file types
+        const result = await parseDocument(file);
+
+        if (result.success) {
+          // Successfully parsed - analyze directly without showing raw text
+          console.log(`Successfully parsed ${result.fileType.toUpperCase()} file:`, result.fileName);
+          console.log('Parsed text length:', result.text.length);
+
+          // Extract and analyze the data
+          const summary = extractAndSummarize(result.text);
+          console.log('Summary:', summary);
+
+          const candidateData = parseTextInput(result.text);
+          console.log('Candidate data:', candidateData);
+
+          const assessment = performComprehensiveAssessment(candidateData);
+          console.log('Assessment:', assessment);
+
+          // Show results
+          setExtractionSummary(summary);
+          setResults(assessment);
+          console.log('Results set successfully');
+
+          // Scroll to results after a brief delay to allow rendering
+          setTimeout(() => {
+            const resultsSection = document.querySelector('.results-section');
+            if (resultsSection) {
+              resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }, 100);
+
+          // Don't put the text in the text box - just analyzed in background
+        } else {
+          // Failed to parse
+          alert(`Failed to parse ${file.name}:\n${result.error}\n\nPlease try:\n1. Converting to TXT format\n2. Or copy/paste the text manually`);
+          setUploadedFileName('');
+          setResults(null);
+        }
+      } catch (error) {
+        console.error('Error parsing file:', error);
+        alert(`Error processing file: ${error.message}\n\nPlease try converting to TXT format or copy/paste the text manually.`);
+        setUploadedFileName('');
+        setResults(null);
+      }
+    } else {
+      // Multiple files - combine all text and analyze together
+      setUploadedFileName(`${files.length} files`);
+      setResults({ loading: true, fileName: `${files.length} files` });
+
+      try {
+        let combinedText = '';
+        let successCount = 0;
+        let failedFiles = [];
+
+        for (const file of files) {
+          const result = await parseDocument(file);
+          if (result.success) {
+            combinedText += `\n\n=== FILE: ${file.name} ===\n${result.text}\n`;
+            successCount++;
+            console.log(`Successfully parsed ${result.fileType.toUpperCase()} file:`, result.fileName);
+          } else {
+            failedFiles.push(`${file.name}: ${result.error}`);
+          }
+        }
+
+        if (successCount > 0) {
+          // Analyze combined text from all files
+          const summary = extractAndSummarize(combinedText);
+          const candidateData = parseTextInput(combinedText);
+          const assessment = performComprehensiveAssessment(candidateData);
+
+          // Show results
+          setExtractionSummary(summary);
+          setResults(assessment);
+
+          // Scroll to results after a brief delay to allow rendering
+          setTimeout(() => {
+            const resultsSection = document.querySelector('.results-section');
+            if (resultsSection) {
+              resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+          }, 100);
+
+          // Show summary of what was processed
+          let message = `Successfully analyzed ${successCount} of ${files.length} files.`;
+          if (failedFiles.length > 0) {
+            message += `\n\nFailed to parse:\n${failedFiles.join('\n')}`;
+            alert(message);
+          }
+        } else {
+          alert(`Failed to parse any files:\n${failedFiles.join('\n')}`);
+          setUploadedFileName('');
+          setResults(null);
+        }
+      } catch (error) {
+        console.error('Error processing files:', error);
+        alert(`Error processing files: ${error.message}`);
+        setUploadedFileName('');
+        setResults(null);
+      }
+    }
+  };
+
+  const handleTextAnalysis = () => {
+    console.log('handleTextAnalysis called');
+    console.log('textInput:', textInput);
+
+    // Validate input before analyzing
+    if (!textInput || textInput.trim() === '') {
+      // Only show alert if there are no results already displayed from file upload
+      if (!results || results.loading) {
+        alert('Please enter candidate information in the text box or upload a medical record file.');
+      }
+      return;
+    }
+
+    try {
+      console.log('Starting analysis...');
+      // First, extract and summarize what we found
+      const summary = extractAndSummarize(textInput);
+      setExtractionSummary(summary);
+
+      // Perform risk assessment
+      const candidateData = parseTextInput(textInput);
+      const assessment = performComprehensiveAssessment(candidateData);
+      setResults(assessment);
+
+      // Scroll to results after a brief delay to allow rendering
+      setTimeout(() => {
+        const resultsSection = document.querySelector('.results-section');
+        if (resultsSection) {
+          resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+      }, 100);
+    } catch (error) {
+      console.error('Error analyzing input:', error);
+      alert('Error analyzing input: ' + error.message);
+      setResults(null);
+    }
+  };
+
+  const handleStructuredAnalysis = () => {
+    try {
+      const candidateData = JSON.parse(structuredInput);
+      const assessment = performComprehensiveAssessment(candidateData);
+      setResults(assessment);
+      setExtractionSummary(null);
+    } catch (error) {
+      alert('Error parsing JSON: ' + error.message);
+    }
+  };
+
+  const handleReset = () => {
+    setTextInput('');
+    setStructuredInput('');
+    setResults(null);
+    setExtractionSummary(null);
+    setUploadedFileName('');
+  };
+
+  const getRiskColor = (riskLevel) => {
+    switch (riskLevel) {
+      case RISK_LEVELS.ELIGIBLE:
+        return '#10b981'; // green
+      case RISK_LEVELS.REQUIRES_COUNSELING:
+        return '#f59e0b'; // yellow/orange
+      case RISK_LEVELS.HIGH_RISK:
+        return '#ef4444'; // red
+      case RISK_LEVELS.DISQUALIFIED:
+        return '#7f1d1d'; // dark red
+      default:
+        return '#6b7280'; // gray
+    }
+  };
+
+  const getAcceptanceColor = (acceptanceLevel) => {
+    switch (acceptanceLevel) {
+      case ACCEPTANCE_LEVELS.HIGHLY_LIKELY:
+        return '#10b981'; // green
+      case ACCEPTANCE_LEVELS.LIKELY:
+        return '#84cc16'; // light green
+      case ACCEPTANCE_LEVELS.POSSIBLE:
+        return '#f59e0b'; // orange
+      case ACCEPTANCE_LEVELS.UNLIKELY:
+        return '#ef4444'; // red
+      case ACCEPTANCE_LEVELS.VERY_UNLIKELY:
+        return '#7f1d1d'; // dark red
+      default:
+        return '#6b7280'; // gray
+    }
+  };
+
+  const getMFMColor = (likelihood) => {
+    switch (likelihood) {
+      case MFM_LIKELIHOOD.LIKELY_APPROVE:
+        return '#10b981'; // green
+      case MFM_LIKELIHOOD.POSSIBLY_APPROVE:
+        return '#f59e0b'; // orange
+      case MFM_LIKELIHOOD.UNLIKELY_APPROVE:
+        return '#ef4444'; // red
+      case MFM_LIKELIHOOD.LIKELY_DENY:
+        return '#7f1d1d'; // dark red
+      default:
+        return '#6b7280'; // gray
+    }
+  };
+
+  const exampleText = `Sarah is a 28-year-old woman interested in becoming a gestational carrier. She has had 2 previous uncomplicated pregnancies, both vaginal deliveries. She's 5'6" and weighs 145 lbs. She's a non-smoker and doesn't use drugs. She's married with a supportive husband and has a stable job as a teacher. She completed her STI screening and all tests came back negative. She has no significant medical history and is generally healthy.`;
+
+  const exampleJSON = {
+    age: 28,
+    pregnancyHistory: {
+      hasCompletedPregnancy: true,
+      numberOfTermPregnancies: 2,
+      numberOfComplications: 0,
+      totalDeliveries: 2,
+      numberOfCesareans: 0
+    },
+    medicalConditions: [],
+    infectiousDiseaseTests: {
+      'HIV-1': 'negative',
+      'HIV-2': 'negative',
+      'Hepatitis-B-surface-antigen': 'negative',
+      'Hepatitis-C-antibody': 'negative',
+      'syphilis': 'negative',
+      'gonorrhea': 'negative',
+      'chlamydia': 'negative'
+    },
+    psychological: {
+      hasCompletedEvaluation: true,
+      currentPsychotropicMedication: false,
+      historyOfMajorDepression: false,
+      historyOfBipolarDisorder: false,
+      historyOfPsychosis: false,
+      historyOfAnxietyDisorder: false,
+      historyOfEatingDisorder: false,
+      historyOfSubstanceAbuse: false,
+      historyOfAbuse: false,
+      evidenceOfCoercion: false,
+      adequateSupportSystem: true,
+      stableEnvironment: true
+    },
+    lifestyle: {
+      bmi: 23.4,
+      currentSmoker: false,
+      currentAlcoholUse: 'social',
+      currentDrugUse: false,
+      recentTattoos: false
+    },
+    environmental: {
+      stableHousing: true,
+      stableEmployment: true,
+      adequateFinancialSituation: true,
+      stableRelationship: true,
+      supportivePartner: true,
+      legalIssues: false
+    }
+  };
+
+  return (
+    <div className="app">
+      <div className="app-container">
+        {/* Sidebar */}
+        <aside className="sidebar">
+          <div className="sidebar-logo">
+            <p className="sidebar-label">CREATED FOR</p>
+            <img src="/alcea-logo.png" alt="ALCEA Logo" className="alcea-logo" />
+            <p className="sidebar-copyright">© RME 2025</p>
+          </div>
+
+          <div className="sidebar-buttons">
+            <button
+              onClick={() => setShowHowToUse(true)}
+              className="sidebar-btn how-to-btn"
+              style={{ backgroundColor: goldBrown }}
+            >
+              <div className="btn-icon">?</div>
+              <span>How To Use</span>
+            </button>
+
+            <button
+              onClick={() => setShowMethod(true)}
+              className="sidebar-btn method-btn"
+              style={{ backgroundColor: mustardYellow }}
+            >
+              <svg className="btn-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              <span>Method & Reliability</span>
+            </button>
+          </div>
+        </aside>
+
+        {/* Main content */}
+        <div className="main-content">
+        <div className="main-card">
+          <div className="app-header">
+            <img src="/carry-calc-logo.png" alt="Carry Calc" className="header-logo" />
+          </div>
+
+          <div className="input-section">
+            <div className="text-input-section">
+              <h2>Upload Medical Record or Enter Description</h2>
+              <p className="helper-text">
+                <strong>Option 1: Upload a medical record</strong> (PDF, DOC, DOCX, TXT) - will be analyzed automatically.<br/>
+                <strong>Option 2: Type/paste a description</strong> below using medical abbreviations (GDM, PIH, C/S, PE, IUGR, VBAC, etc.)
+              </p>
+
+              <div className="name-input-section">
+                <label htmlFor="candidate-name">Candidate Name (Optional)</label>
+                <input
+                  type="text"
+                  id="candidate-name"
+                  value={candidateName}
+                  onChange={(e) => setCandidateName(e.target.value)}
+                  placeholder="Enter candidate name..."
+                  className="name-input"
+                />
+              </div>
+
+              <div className="upload-section">
+                <input
+                  type="file"
+                  id="file-upload"
+                  accept=".txt,.pdf,.doc,.docx"
+                  multiple
+                  onChange={handleFileUpload}
+                  style={{ display: 'none' }}
+                />
+                <label htmlFor="file-upload" className="btn-upload">
+                  📄 Upload Medical Records (Auto-Analyzes)
+                </label>
+                {uploadedFileName && (
+                  <span className="uploaded-file-name">
+                    ✓ {uploadedFileName}
+                  </span>
+                )}
+              </div>
+
+              <textarea
+                value={textInput}
+                onChange={(e) => setTextInput(e.target.value)}
+                placeholder="Example: 35 yo, G3P2, 2 C/S, history of GDM controlled by diet, BMI 31, no other complications..."
+                rows={10}
+              />
+              <div className="button-group">
+                <button onClick={handleTextAnalysis} className="btn-primary">
+                  Analyze
+                </button>
+                <button onClick={handleReset} className="btn-secondary">
+                  Reset
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        </div> {/* End main-content */}
+      </div> {/* End app-container with sidebar */}
+
+      {/* Results Section - Full Width Below */}
+      {results && (
+        <div className="results-section-full-width">
+          {results.loading ? (
+            <div className="loading-state">
+              <h2>Analyzing {results.fileName}...</h2>
+              <p>Extracting medical information and performing risk assessment...</p>
+              <div className="loading-spinner">⏳</div>
+            </div>
+          ) : results.clinicTypeAnalysis && (
+            <div className="clinic-type-analysis">
+              <h2>Acceptance Odds by Clinic Type</h2>
+              <p className="section-description">
+                Different clinics have varying standards. Here's how this candidate would likely be viewed by different clinic types:
+              </p>
+
+              <div className="clinic-cards">
+                <div className="clinic-card">
+                  <h3 className="clinic-type-name">
+                    <span className="clinic-icon">⭐</span> Strict/Premium Clinics
+                  </h3>
+                  <p className="clinic-description">
+                    Strictest standards - BMI under 30, max 1-2 C-sections, age ideally under 35,
+                    no gestational diabetes history, minimal risk factor combinations
+                  </p>
+                  <div
+                    className="acceptance-score"
+                    style={{ backgroundColor: getAcceptanceColor(results.clinicTypeAnalysis.strict.acceptanceLevel) }}
+                  >
+                    {results.clinicTypeAnalysis.strict.score}%
+                  </div>
+                  <div className="acceptance-level">
+                    {getAcceptanceProbabilityDescription(results.clinicTypeAnalysis.strict.acceptanceLevel)}
+                  </div>
+                  <p className="clinic-summary">{results.clinicTypeAnalysis.strict.summary}</p>
+                  {results.clinicTypeAnalysis.strict.issues.length > 0 && (
+                    <div className="clinic-issues">
+                      <h4>Concerns for Strict Clinics:</h4>
+                      <ul>
+                        {results.clinicTypeAnalysis.strict.issues.map((issue, idx) => (
+                          <li key={idx} className={`issue-${issue.severity}`}>
+                            <strong>{issue.severity.toUpperCase()}:</strong> {issue.message}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                <div className="clinic-card">
+                  <h3 className="clinic-type-name">
+                    <span className="clinic-icon">✓</span> Moderate/Average Clinics
+                  </h3>
+                  <p className="clinic-description">
+                    Real-world moderate clinic standards - <strong>BMI max 32</strong> (physician approval to proceed),
+                    max 3 C-sections (4+ typically declined), age 21-45, <strong>GDM history requires physician approval</strong>
+                    (NOT auto-decline). <strong>SOME case-by-case physician approval</strong> for specific factors.
+                  </p>
+                  <div
+                    className="acceptance-score"
+                    style={{ backgroundColor: getAcceptanceColor(results.clinicTypeAnalysis.moderate.acceptanceLevel) }}
+                  >
+                    {results.clinicTypeAnalysis.moderate.score}%
+                  </div>
+                  <div className="acceptance-level">
+                    {getAcceptanceProbabilityDescription(results.clinicTypeAnalysis.moderate.acceptanceLevel)}
+                  </div>
+                  <p className="clinic-summary">{results.clinicTypeAnalysis.moderate.summary}</p>
+                  {results.clinicTypeAnalysis.moderate.issues.length > 0 && (
+                    <div className="clinic-issues">
+                      <h4>Concerns for Moderate Clinics:</h4>
+                      <ul>
+                        {results.clinicTypeAnalysis.moderate.issues.map((issue, idx) => (
+                          <li key={idx} className={`issue-${issue.severity}`}>
+                            <strong>{issue.severity.toUpperCase()}:</strong> {issue.message}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+
+                <div className="clinic-card">
+                  <h3 className="clinic-type-name">
+                    <span className="clinic-icon">→</span> Lenient Clinics
+                  </h3>
+                  <p className="clinic-description">
+                    More flexible standards - BMI up to 32-35, age up to 45 (some to 48),
+                    controlled conditions acceptable. <strong>ALL lenient clinics use case-by-case review</strong> -
+                    common sense approach evaluating overall health picture even outside ASRM guidelines.
+                  </p>
+                  <div
+                    className="acceptance-score"
+                    style={{ backgroundColor: getAcceptanceColor(results.clinicTypeAnalysis.lenient.acceptanceLevel) }}
+                  >
+                    {results.clinicTypeAnalysis.lenient.score}%
+                  </div>
+                  <div className="acceptance-level">
+                    {getAcceptanceProbabilityDescription(results.clinicTypeAnalysis.lenient.acceptanceLevel)}
+                  </div>
+                  <p className="clinic-summary">{results.clinicTypeAnalysis.lenient.summary}</p>
+                  {results.clinicTypeAnalysis.lenient.issues.length > 0 && (
+                    <div className="clinic-issues">
+                      <h4>Concerns for Lenient Clinics:</h4>
+                      <ul>
+                        {results.clinicTypeAnalysis.lenient.issues.map((issue, idx) => (
+                          <li key={idx} className={`issue-${issue.severity}`}>
+                            <strong>{issue.severity.toUpperCase()}:</strong> {issue.message}
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {results.clinicTypeAnalysis.recommendation && results.clinicTypeAnalysis.recommendation.length > 0 && (
+                <div className="clinic-recommendations">
+                  <h3>Clinic Type Recommendations:</h3>
+                  <ul>
+                    {results.clinicTypeAnalysis.recommendation.map((rec, idx) => (
+                      <li key={idx}>{rec}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </div>
+          )}
+
+          {results.mfmAssessment && (
+            <div className="mfm-assessment">
+              <h2>🏥 Maternal-Fetal Medicine (MFM) Review</h2>
+              <p className="section-description">
+                MFM specialists evaluate high-risk pregnancies. Here's the assessment of whether MFM review
+                is needed and their likely recommendation:
+              </p>
+
+              <div className="mfm-summary-card">
+                <div className="mfm-header">
+                  <div>
+                    <h3>MFM Consultation</h3>
+                    <div
+                      className="mfm-review-badge"
+                      style={{
+                        backgroundColor: results.mfmAssessment.consultationNeeded ? '#ef4444' : '#10b981'
+                      }}
+                    >
+                      {getMFMReviewDescription(results.mfmAssessment.reviewLevel)}
+                    </div>
+                  </div>
+                  <div>
+                    <h3>Likely MFM Decision</h3>
+                    <div
+                      className="mfm-likelihood-badge"
+                      style={{ backgroundColor: getMFMColor(results.mfmAssessment.likelihood.level) }}
+                    >
+                      {getMFMLikelihoodDescription(results.mfmAssessment.likelihood.level)}
+                      <div className="mfm-percentage">{results.mfmAssessment.likelihood.percentage}</div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="mfm-summary-text">
+                  <p><strong>Summary:</strong> {results.mfmAssessment.summary}</p>
+                </div>
+              </div>
+
+              {results.mfmAssessment.findings.length > 0 && (
+                <div className="mfm-findings">
+                  <h3>What the MFM Will Say:</h3>
+                  {results.mfmAssessment.findings.map((finding, idx) => (
+                    <div
+                      key={idx}
+                      className="mfm-finding"
+                      data-severity={finding.severity}
+                    >
+                      <h4>{finding.category}</h4>
+                      <div className="mfm-concern">
+                        <strong>Concern:</strong> {finding.concern}
+                      </div>
+                      <div className="mfm-view">
+                        <strong>MFM Perspective:</strong> {finding.mfmView}
+                      </div>
+                      <div className="mfm-approvability">
+                        <strong>Approvability:</strong> {finding.approvability}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+
+            </div>
+          )}
+
+          {!results.loading && (
+            <>
+              <div className="recommendations">
+                <h2>General Recommendations</h2>
+                <ul>
+                  {results.recommendations.map((rec, idx) => (
+                    <li key={idx}>{rec}</li>
+                  ))}
+                </ul>
+              </div>
+
+              <div className="detailed-assessments">
+                <h2>Detailed Assessment by Category</h2>
+                {Object.entries(results.summary.categorySummaries).map(([category, assessments]) => (
+                  <div key={category} className="category-section">
+                    <h3>{category}</h3>
+                    {assessments.map((assessment, idx) => (
+                      <div
+                        key={idx}
+                        className="assessment-item"
+                        style={{ borderLeftColor: getRiskColor(assessment.status) }}
+                      >
+                        <div
+                          className="status-indicator"
+                          style={{ backgroundColor: getRiskColor(assessment.status) }}
+                        >
+                          {assessment.status}
+                        </div>
+                        <div className="assessment-content">
+                          <p className="assessment-message">{assessment.message}</p>
+                          <p className="assessment-guideline">
+                            <em>Guideline: {assessment.guideline}</em>
+                          </p>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+
+              <div className="next-steps">
+                <h2>Next Steps</h2>
+                <ol>
+                  <li>Share results with qualified reproductive endocrinologist</li>
+                  <li>Schedule comprehensive medical evaluation</li>
+                  <li>Arrange psychological evaluation with specialized mental health professional</li>
+                  <li>Consult with independent legal counsel</li>
+                  <li>Complete all required infectious disease screenings</li>
+                  <li>Participate in psychoeducational counseling</li>
+                </ol>
+              </div>
+            </>
+          )}
+
+          {/* Medical Glossary Section */}
+          <div className="glossary-section">
+          <button
+            onClick={() => setShowGlossary(!showGlossary)}
+            className="glossary-toggle"
+          >
+            {showGlossary ? '▼' : '▶'} Medical Abbreviations Glossary
+          </button>
+
+          {showGlossary && (
+            <div className="glossary-content">
+              <p className="glossary-intro">
+                Common medical abbreviations and terminology for pregnancy, delivery, and obstetric history:
+              </p>
+
+              {Object.entries(getGlossaryByCategory()).map(([category, terms]) => (
+                <div key={category} className="glossary-category">
+                  <h3>{category}</h3>
+                  <div className="glossary-terms">
+                    {terms.map(term => (
+                      <div key={term} className="glossary-term">
+                        <strong>{term}:</strong> {MEDICAL_GLOSSARY[term]}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+
+              <div className="glossary-category">
+                <h3>Additional Common Terms</h3>
+                <div className="glossary-terms">
+                  <div className="glossary-term">
+                    <strong>Placenta previa:</strong> {MEDICAL_GLOSSARY["Placenta previa"]}
+                  </div>
+                  <div className="glossary-term">
+                    <strong>Placental abruption:</strong> {MEDICAL_GLOSSARY["Placental abruption"]}
+                  </div>
+                  <div className="glossary-term">
+                    <strong>Cerclage:</strong> {MEDICAL_GLOSSARY["Cerclage"]}
+                  </div>
+                  <div className="glossary-term">
+                    <strong>SAB:</strong> {MEDICAL_GLOSSARY["SAB"]}
+                  </div>
+                  <div className="glossary-term">
+                    <strong>TAB:</strong> {MEDICAL_GLOSSARY["TAB"]}
+                  </div>
+                  <div className="glossary-term">
+                    <strong>Ectopic:</strong> {MEDICAL_GLOSSARY["Ectopic"]}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+          {/* Medical Disclaimer at bottom */}
+          <div className="disclaimer disclaimer-bottom">
+          <h3>⚠️ Medical Disclaimer</h3>
+          <p>
+            <strong>IMPORTANT:</strong> This tool provides risk analysis based on medical history and ASRM guidelines
+            for informational purposes. All surrogacy decisions must be made in consultation with qualified medical
+            professionals, reproductive endocrinologists, and mental health specialists who will conduct comprehensive
+            medical evaluation including physical examination, laboratory testing, and psychological screening.
+          </p>
+          <p>
+            This assessment analyzes pregnancy history, medical conditions, and clinic acceptance patterns based on
+            ASRM (American Society for Reproductive Medicine) 2022 guidelines for gestational carriers.
+          </p>
+          </div>
+
+          <footer className="app-footer">
+          <p>
+            Based on: American Society for Reproductive Medicine (ASRM) Committee Opinion 2022 -
+            "Recommendations for practices using gestational carriers"
+          </p>
+          <p>
+            This tool is not affiliated with or endorsed by ASRM. For official guidelines,
+            visit <a href="https://www.asrm.org" target="_blank" rel="noopener noreferrer">www.asrm.org</a>
+          </p>
+          </footer>
+        </div>
+      )}
+
+      {/* How To Use Modal */}
+      {showHowToUse && (
+        <div className="modal-overlay" onClick={() => setShowHowToUse(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 style={{ color: goldBrown }}>How To Use</h2>
+              <button onClick={() => setShowHowToUse(false)} className="modal-close">×</button>
+            </div>
+            <div className="modal-body">
+              <p className="modal-intro">This tool helps assess surrogate candidates for edge cases and complex combinations of risk factors.</p>
+
+              <div className="modal-section">
+                <h3 style={{ color: darkTeal }}>Getting Started</h3>
+                <p>Enter medical records or a narrative description of the surrogate candidate using standard medical abbreviations and terminology.</p>
+                <p>The tool will automatically parse the text and extract relevant medical information.</p>
+              </div>
+
+              <div className="modal-section">
+                <h3 style={{ color: darkTeal }}>What You'll Get</h3>
+                <p>The tool analyzes candidates across multiple dimensions:</p>
+                <ul>
+                  <li><strong>ASRM Guidelines Assessment:</strong> Compliance with 2022 gestational carrier standards</li>
+                  <li><strong>Clinic Type Odds:</strong> Acceptance probability at strict, moderate, and lenient clinics</li>
+                  <li><strong>MFM Review:</strong> Whether maternal-fetal medicine consultation is needed</li>
+                </ul>
+              </div>
+
+              <div className="modal-section">
+                <h3 style={{ color: darkTeal }}>Important Notes</h3>
+                <ul>
+                  <li>This tool is for <strong>edge cases only</strong> - candidates with combinations of "iffy" factors</li>
+                  <li>Assumes candidate has at least one healthy term birth</li>
+                  <li>Not for catching obvious disqualifiers</li>
+                  <li>All decisions must be made with qualified medical professionals</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Method & Reliability Modal */}
+      {showMethod && (
+        <div className="modal-overlay" onClick={() => setShowMethod(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 style={{ color: mustardYellow }}>Method & Reliability</h2>
+              <button onClick={() => setShowMethod(false)} className="modal-close">×</button>
+            </div>
+            <div className="modal-body">
+              <p className="modal-intro">Our surrogacy risk assessment tool uses evidence-based guidelines and data from authoritative medical sources.</p>
+
+              <div className="modal-section">
+                <h3 style={{ color: darkTeal }}>Data Sources</h3>
+                <ul>
+                  <li><strong>ASRM (American Society for Reproductive Medicine):</strong> 2022 Guidelines for Gestational Carriers - standard obstetric terminology and surrogacy-specific criteria</li>
+                  <li><strong>CDC (Centers for Disease Control and Prevention):</strong> Maternal health conditions, chronic conditions (anemia, anxiety, depression, diabetes, hypertension), infectious diseases (UTI, HIV, STI/STD, COVID-19), pregnancy outcomes</li>
+                  <li><strong>March of Dimes:</strong> Chronic health conditions affecting pregnancy including autoimmune diseases (lupus, MS, RA, IBD), cardiovascular/pulmonary conditions, endocrine disorders, mental health conditions</li>
+                  <li><strong>Blue Cross Blue Shield:</strong> Preterm labor signs and symptoms, gestational diabetes management, pregnancy-induced hypertension, placental complications</li>
+                  <li><strong>Stanford Children's Health:</strong> Prenatal testing terminology, fetal development and monitoring, pregnancy complications (HELLP syndrome, IUGR), blood/lab testing, Rh disease</li>
+                  <li><strong>Johns Hopkins Medicine:</strong> Amniotic fluid complications, bleeding complications, ectopic pregnancy, miscarriage and fetal loss, placental complications, preeclampsia/eclampsia</li>
+                  <li><strong>Real Clinic Standards:</strong> San Diego Fertility Center (SDFC) and industry-standard IVF clinic acceptance criteria</li>
+                </ul>
+              </div>
+
+              <div className="modal-section">
+                <h3 style={{ color: darkTeal }}>Assessment Methodology</h3>
+                <p>Our algorithm evaluates candidates using a multi-tiered approach:</p>
+                <ul>
+                  <li><strong>ASRM Guidelines:</strong> Baseline assessment against 2022 standards for age, pregnancy history, medical conditions, BMI</li>
+                  <li><strong>Clinic Type Differentiation:</strong> Strict clinics (rigid ASRM adherence), moderate clinics (some case-by-case review), lenient clinics (common sense review)</li>
+                  <li><strong>Combination Penalties:</strong> Multiple risk factors compound exponentially, especially at strict clinics</li>
+                  <li><strong>Condition-Specific Scoring:</strong> Individual medical conditions weighted by severity and recurrence risk</li>
+                </ul>
+              </div>
+
+              <div className="modal-section">
+                <h3 style={{ color: darkTeal }}>MFM Assessment for Surrogacy</h3>
+                <p><strong>Critical distinction:</strong> MFM evaluation for surrogacy differs from evaluation of women carrying their own pregnancies.</p>
+                <p>MFMs apply a <strong>HIGHER standard for surrogates</strong> because:</p>
+                <ul>
+                  <li><strong>Duty to protect surrogate:</strong> Elective pregnancy for someone else - must not exploit vulnerable women or expose them to unreasonable risks</li>
+                  <li><strong>Duty to intended parents:</strong> Must minimize pregnancy complications that could harm the intended child</li>
+                  <li><strong>Higher ethical bar:</strong> A woman's reproductive autonomy allows accepting risks for her own pregnancy. In surrogacy, MFM must protect BOTH parties</li>
+                </ul>
+                <p><strong>Result:</strong> Conditions MFM might approve for a woman wanting her own baby ("as long as she understands the risks") are often <strong>declined for surrogacy</strong>. MFMs are MORE conservative when evaluating surrogate candidates.</p>
+              </div>
+
+              <div className="modal-section">
+                <h3 style={{ color: darkTeal }}>Text Parsing</h3>
+                <p>Our AI-powered text parser recognizes 400+ medical terms including:</p>
+                <ul>
+                  <li>Pregnancy and delivery abbreviations (G3P2, SVD, C/S, VBAC)</li>
+                  <li>Complication terminology (GDM, PE, HELLP, IUGR, PPH)</li>
+                  <li>Dense medical chart notes format</li>
+                  <li>Severe complications (hyperemesis, gastroparesis, PICC, TPN)</li>
+                </ul>
+              </div>
+
+              <div className="modal-section">
+                <h3 style={{ color: darkTeal }}>Limitations</h3>
+                <ul>
+                  <li>This tool is for informational purposes only and does not constitute medical advice</li>
+                  <li>Designed for edge cases, not for screening obvious disqualifiers</li>
+                  <li>Scores are estimates based on general standards - each clinic has unique criteria</li>
+                  <li>All surrogacy decisions must be made with qualified medical professionals</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+export default App;

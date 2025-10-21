@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeonearBy & Risk Ranger - Alcea Surrogacy Tools</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', sans-serif;
+            background: #f9fafb;
+            color: #1f2937;
+        }
+
+        /* Main container */
+        .apps-container {
+            width: 100%;
+            max-width: 100%;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        /* Responsive grid for side-by-side */
+        .apps-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
+            min-height: 100vh;
+        }
+
+        /* Desktop: Side by side */
+        @media (min-width: 1536px) {
+            .apps-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .app-frame {
+                border-right: 2px solid #e5e7eb;
+            }
+
+            .app-frame:last-child {
+                border-right: none;
+            }
+        }
+
+        /* Tablet/Large screens: Stacked */
+        @media (min-width: 768px) and (max-width: 1535px) {
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .app-frame {
+                border-bottom: 2px solid #e5e7eb;
+                min-height: 100vh;
+            }
+
+            .app-frame:last-child {
+                border-bottom: none;
+            }
+        }
+
+        /* Mobile: Stacked */
+        @media (max-width: 767px) {
+            .apps-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .app-frame {
+                border-bottom: 2px solid #e5e7eb;
+                min-height: 100vh;
+            }
+        }
+
+        /* Individual app frame */
+        .app-frame {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background: #f9fafb;
+        }
+
+        /* Iframe styling */
+        .app-frame iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+            min-height: 100vh;
+        }
+
+        /* Loading state */
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #6b7280;
+        }
+
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #e5e7eb;
+            border-top-color: #7d2431;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Sticky header (optional) */
+        .header {
+            position: sticky;
+            top: 0;
+            background: white;
+            border-bottom: 2px solid #e5e7eb;
+            padding: 16px 24px;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .header-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .header-logo img {
+            height: 32px;
+            width: auto;
+        }
+
+        .header-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1f2937;
+        }
+
+        .header-subtitle {
+            font-size: 12px;
+            color: #6b7280;
+            margin-top: 2px;
+        }
+
+        /* Responsive text */
+        @media (max-width: 640px) {
+            .header {
+                padding: 12px 16px;
+            }
+
+            .header-title {
+                font-size: 16px;
+            }
+
+            .header-logo img {
+                height: 24px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Optional: Unified header -->
+    <div class="header">
+        <div class="header-logo">
+            <img src="/alcea-logo.png" alt="ALCEA Logo" onerror="this.style.display='none'">
+            <div>
+                <div class="header-title">Alcea Surrogacy Tools</div>
+                <div class="header-subtitle">NeonearBy NICU Finder & Risk Ranger Assessment</div>
+            </div>
+        </div>
+        <div style="font-size: 12px; color: #6b7280;">© RME 2025</div>
+    </div>
+
+    <!-- Apps container -->
+    <div class="apps-container">
+        <div class="apps-grid">
+            <!-- NeonearBy NICU Finder -->
+            <div class="app-frame" id="neonearby-frame">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+
+            <!-- Risk Ranger -->
+            <div class="app-frame" id="risk-ranger-frame">
+                <div class="loading">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const config = {
+            neonearbyUrl: 'http://localhost:3000',  // Update with your NeonearBy URL
+            riskRangerUrl: 'http://localhost:5173', // Update with your Risk Ranger URL
+            embedMode: true
+        };
+
+        // Create iframes
+        function embedApp(containerId, appUrl, appName) {
+            const container = document.getElementById(containerId);
+
+            // Create iframe
+            const iframe = document.createElement('iframe');
+            iframe.src = appUrl;
+            iframe.title = appName;
+            iframe.loading = 'lazy';
+
+            // Handle load
+            iframe.onload = () => {
+                // Remove loading spinner
+                const loading = container.querySelector('.loading');
+                if (loading) {
+                    loading.remove();
+                }
+            };
+
+            // Handle errors
+            iframe.onerror = () => {
+                container.innerHTML = `
+                    <div class="loading">
+                        <p style="color: #ef4444;">Failed to load ${appName}</p>
+                        <p style="color: #6b7280; font-size: 14px; margin-top: 8px;">
+                            Please check that the app is running at ${appUrl}
+                        </p>
+                    </div>
+                `;
+            };
+
+            // Append iframe
+            container.appendChild(iframe);
+        }
+
+        // Initialize both apps
+        window.addEventListener('DOMContentLoaded', () => {
+            embedApp('neonearby-frame', config.neonearbyUrl, 'NeonearBy NICU Finder');
+            embedApp('risk-ranger-frame', config.riskRangerUrl, 'Risk Ranger');
+        });
+
+        // Handle responsive resize
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                // Refresh iframe heights on resize
+                const iframes = document.querySelectorAll('iframe');
+                iframes.forEach(iframe => {
+                    iframe.style.height = '100vh';
+                });
+            }, 250);
+        });
+
+        // Message passing between apps (if needed for cross-app communication)
+        window.addEventListener('message', (event) => {
+            // Validate origin for security
+            if (event.origin !== config.neonearbyUrl && event.origin !== config.riskRangerUrl) {
+                return;
+            }
+
+            // Handle messages from either app
+            console.log('Message from app:', event.data);
+
+            // Example: Forward data between apps
+            // const otherFrame = event.source === neonearbyFrame ? riskRangerFrame : neonearbyFrame;
+            // otherFrame.postMessage(event.data, '*');
+        });
+    </script>
+</body>
+</html>
