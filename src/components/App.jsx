@@ -600,10 +600,8 @@ function App() {
         <div className="app-container">
         {/* Sidebar */}
         <aside className="sidebar" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-          <div className="sidebar-logo">
-            <p className="sidebar-label">CREATED FOR</p>
-            <img src="/alcea-logo.png" alt="ALCEA Logo" className="alcea-logo" />
-            <p className="sidebar-copyright">© RME 2025</p>
+          <div className="sidebar-logo" style={{ padding: '12px', marginBottom: '16px' }}>
+            <img src="/alcea-logo.png" alt="ALCEA Logo" className="alcea-logo" style={{ width: '80%', margin: '0 auto', display: 'block' }} />
           </div>
 
           <div className="sidebar-buttons" style={{ flex: '1', display: 'flex', flexDirection: 'column' }}>
@@ -822,6 +820,13 @@ function App() {
                   rows={8}
                   style={{ width: '100%', padding: '8px', fontSize: '14px', border: '1px solid #d1d5db', borderRadius: '4px', fontFamily: 'inherit' }}
                 />
+              </div>
+
+              {/* Attribution Footer */}
+              <div style={{ marginTop: '20px', paddingTop: '15px', borderTop: '1px solid #e5e7eb', textAlign: 'right' }}>
+                <p style={{ fontSize: '11px', color: '#9ca3af', margin: 0 }}>
+                  Made for Alcea Surrogacy © 2025 Ruth Ellis
+                </p>
               </div>
             </div>
           </div>
