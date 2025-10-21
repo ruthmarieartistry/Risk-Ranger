@@ -100,6 +100,7 @@ export const MEDICAL_GLOSSARY = {
 
   // Pregnancy Complications
   "GDM": "Gestational Diabetes Mellitus",
+  "GD": "Gestational Diabetes",
   "PIH": "Pregnancy-Induced Hypertension",
   "PE": "Preeclampsia",
   "HELLP": "Hemolysis, Elevated Liver enzymes, Low Platelets syndrome",

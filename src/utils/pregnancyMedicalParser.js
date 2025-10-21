@@ -79,10 +79,11 @@ export const PREGNANCY_PATTERNS = {
     ],
     diabetes: [
       /\bGDM\b/i,  // Gestational Diabetes Mellitus
+      /\bGD\b/i,   // GD (short for Gestational Diabetes)
       /gestational\s+diabetes/i,
       /pregnancy[- ]induced\s+diabetes/i,
-      /\bA1\b.*\bgdm\b/i,  // A1 GDM (diet-controlled)
-      /\bA2\b.*\bgdm\b/i,  // A2 GDM (medication-controlled)
+      /\bA1\b.*\bgdm?\b/i,  // A1 GDM/GD (diet-controlled)
+      /\bA2\b.*\bgdm?\b/i,  // A2 GDM/GD (medication-controlled)
       /diet[- ]controlled.*diabetes/i,
       /insulin[- ]requiring.*diabetes/i,
       /type\s+[12]\s+diabetes/i,
