@@ -19,15 +19,16 @@ body {
   justify-content: center;
   align-items: flex-start;
   padding: 16px;
-  background: #f9fafb;
+  background: #ffffff;
 }
 
 /* Single white card container - matches NeoNearBy */
 .app-container {
   display: flex;
-  max-width: 1280px;
-  width: 100%;
-  background: white;
+  max-width: 900px;
+  width: 900px;
+  height: 900px;
+  background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: none;
@@ -167,10 +168,10 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  background: white;
+  background: #ffffff;
   border-radius: 0;
   box-shadow: none;
-  padding: 20px;
+  padding: 24px 20px 20px 20px;
 }
 
 /* Modal Styles */
