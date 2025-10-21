@@ -1293,14 +1293,15 @@ function App() {
               </div>
 
               <div className="modal-section">
-                <h3 style={{ color: darkTeal }}>Text Parsing - Hybrid Approach</h3>
-                <p>We use a <strong>hybrid parsing system</strong> that combines AI intelligence with deterministic rules:</p>
+                <h3 style={{ color: darkTeal }}>Text Parsing - Multi-Layered Approach</h3>
+                <p>Our system employs a <strong>cascading three-tier extraction process</strong> designed specifically for medical record analysis:</p>
                 <ul>
-                  <li><strong>AI Medical Parser (Optional):</strong> For complex medical records, uses advanced language models trained on medical text to parse discharge summaries, clinical notes, and hospital records. The AI intelligently groups related complications (e.g., "hyperemesis + PICC line + TPN + hospitalization" = 1 severe hyperemesis complication) and distinguishes pregnancy-induced vs chronic conditions.</li>
-                  <li><strong>Deterministic Parser (Fallback):</strong> Recognizes 400+ medical terms using keyword matching for standard abbreviations (G3P2, SVD, C/S, VBAC, GDM, PE, HELLP, IUGR, PPH)</li>
-                  <li><strong>Scoring System:</strong> All scoring decisions use deterministic rules (no AI bias) - AI only extracts facts, deterministic algorithms make acceptance decisions</li>
+                  <li><strong>Primary Layer - Structured Pattern Recognition:</strong> Custom-built regex patterns recognize 400+ medical terms, standard abbreviations (G3P2, SVD, C/S, VBAC), and pregnancy history notation. This deterministic parser handles the majority of medical records efficiently and accurately.</li>
+                  <li><strong>Secondary Layer - Medical Glossary Mapping:</strong> When structured patterns don't match, the system cross-references a curated medical glossary built from CDC, ASRM, March of Dimes, and clinical sources. This layer maps natural language descriptions to standardized medical conditions.</li>
+                  <li><strong>Tertiary Layer - Specialized Medical AI (Optional):</strong> For complex narrative medical records that resist structured parsing, users can opt into AI analysis. This layer uses language models with medical domain fine-tuning to extract conditions from discharge summaries and clinical notes. The AI intelligently groups related symptoms (e.g., "hyperemesis + PICC line + TPN + hospitalization" = 1 severe hyperemesis episode) and distinguishes pregnancy-induced vs chronic conditions.</li>
+                  <li><strong>Scoring Engine - 100% Deterministic:</strong> Regardless of extraction method, all risk scoring uses hard-coded clinical rules. AI is never used for decision-making—only for text extraction when simpler methods fail.</li>
                 </ul>
-                <p><strong>Why hybrid?</strong> Complex medical records with narrative descriptions benefit from AI's contextual understanding, while simple structured data can be parsed quickly with keyword matching. Deterministic scoring ensures consistent, unbiased decisions.</p>
+                <p><strong>Why this architecture?</strong> Most medical records can be parsed with fast, reliable pattern matching. The medical glossary handles edge cases with natural language descriptions. AI is reserved as a final option for truly complex narrative records, ensuring specialized medical language understanding without relying on general-purpose chatbots. This approach combines speed, accuracy, and clinical specificity.</p>
               </div>
 
               <div className="modal-section">
