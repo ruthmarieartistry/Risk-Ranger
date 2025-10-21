@@ -360,7 +360,7 @@ function App() {
 
       // Scroll to results after a brief delay to allow rendering
       setTimeout(() => {
-        const resultsSection = document.querySelector('.results-section');
+        const resultsSection = document.querySelector('.results-section-full-width');
         if (resultsSection) {
           resultsSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }

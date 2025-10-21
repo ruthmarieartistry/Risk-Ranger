@@ -563,7 +563,7 @@ textarea:focus {
   border-radius: 12px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   border: 2px solid #e5e7eb;
-  margin: 12px auto;
+  margin: 30px auto;
   padding: 40px;
 }
 
