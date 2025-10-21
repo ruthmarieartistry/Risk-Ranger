@@ -10,15 +10,17 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background: #ffffff;
+  background: #f5f5f5;
+  margin: 0;
+  padding: 0;
 }
 
 .app {
   display: flex;
   justify-content: center;
   align-items: flex-start;
-  padding: 0;
-  background: #ffffff;
+  padding: 20px;
+  background: transparent;
 }
 
 /* Single white card container - matches NeoNearBy */
