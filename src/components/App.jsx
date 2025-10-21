@@ -740,14 +740,14 @@ function App() {
               <h2>Upload Medical Record or Enter Description</h2>
               <p className="helper-text">
                 <strong>Option 1: Upload a medical record</strong> (PDF, DOC, DOCX, TXT) - will be analyzed automatically.<br/>
-                <strong>Option 2: Type/paste a description</strong> below using medical abbreviations (GDM, PIH, C/S, PE, IUGR, VBAC, etc.)
+                <strong>Option 2: Type/paste a description</strong> below.
               </p>
 
               {/* Demographics Section */}
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '15px', marginBottom: '20px' }}>
                 <div>
                   <label htmlFor="candidate-name" style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '6px' }}>
-                    Candidate Name <span style={{ fontWeight: 'normal', color: '#9ca3af', fontSize: '12px' }}>(optional)</span>
+                    Candidate Name <span style={{ fontWeight: 'normal', color: '#d97706', fontSize: '12px' }}>(required)</span>
                   </label>
                   <input
                     type="text"
@@ -810,13 +810,13 @@ function App() {
               {/* Main Text Input Box */}
               <div style={{ marginTop: '20px' }}>
                 <label htmlFor="text-input" style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '6px' }}>
-                  Medical Information (Required)
+                  Medical Information <span style={{ fontWeight: 'normal', color: '#9ca3af', fontSize: '12px' }}>(optional if uploading file)</span>
                 </label>
                 <textarea
                   id="text-input"
                   value={textInput}
                   onChange={(e) => setTextInput(e.target.value)}
-                  placeholder="Enter candidate information in plain English. Examples:&#10;- 'Sarah, 28 years old, 2 previous healthy pregnancies, vaginal deliveries, BMI 24, non-smoker'&#10;- '32 year old, 3 kids, 1 c-section, history of gestational diabetes'&#10;- 'G3P2, age 35, BMI 29, no complications'&#10;&#10;Or paste medical records/lab results here."
+                  placeholder="Enter candidate information. Examples:&#10;- 'Sarah, 28 years old, 2 previous healthy pregnancies, vaginal deliveries, BMI 24, non-smoker'&#10;- '32 year old, 3 kids, 1 c-section, history of gestational diabetes'&#10;- '4 pregnancies, 2 were perfect, I had hyperemesis, I had GD diet controlled, 2 c-sections'&#10;&#10;Or paste medical records/lab results here."
                   rows={5}
                   style={{ width: '100%', padding: '8px', fontSize: '14px', border: '1px solid #d1d5db', borderRadius: '4px', fontFamily: 'inherit' }}
                 />
