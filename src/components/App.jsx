@@ -32,9 +32,9 @@ function App() {
   });
   const [showClaudeSettings, setShowClaudeSettings] = useState(false);
   const [useClaudeParser, setUseClaudeParser] = useState(() => {
-    // Load preference from localStorage, default to true
+    // Load preference from localStorage, default to false (deterministic parser)
     const saved = localStorage.getItem('useClaudeParser');
-    return saved !== null ? saved === 'true' : true;
+    return saved !== null ? saved === 'true' : false;
   });
   const [clinicalNarratives, setClinicalNarratives] = useState(null);
 
