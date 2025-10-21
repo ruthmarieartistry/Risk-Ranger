@@ -6,5 +6,17 @@ export default defineConfig({
   server: {
     port: 5173,
     open: true
+  },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'pdf-lib': ['pdfjs-dist'],
+          'canvas-lib': ['html2canvas'],
+          'react-vendor': ['react', 'react-dom']
+        }
+      }
+    },
+    chunkSizeWarningLimit: 600
   }
 });
