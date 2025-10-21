@@ -171,7 +171,7 @@ body {
 /* Main Content - fills remaining space in square */
 .main-content {
   flex: 1;
-  padding: 0;
+  padding: 0 16px 0 0;
   overflow-y: auto;
 }
 
