@@ -62,7 +62,7 @@ Add this to your website to display Risk Ranger and NeoNearBy side by side:
   <div class="tool-wrapper">
     <div class="tool-header risk-ranger">Risk Ranger</div>
     <iframe
-      src="https://riskranger.netlify.app/"
+      src="https://risk-ranger.pages.dev/"
       title="Risk Ranger - Medical Risk Assessment"
       loading="lazy"
     ></iframe>
@@ -112,7 +112,7 @@ Delete the header divs:
 ```html
 <div class="tool-wrapper">
   <!-- Remove this: <div class="tool-header risk-ranger">Risk Ranger</div> -->
-  <iframe src="https://riskranger.netlify.app/" ...></iframe>
+  <iframe src="https://risk-ranger.pages.dev/" ...></iframe>
 </div>
 ```
 

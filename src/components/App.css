@@ -17,23 +17,32 @@ body {
 .app {
   display: flex;
   justify-content: center;
-  align-items: flex-start;
+  align-items: center;
   padding: 16px;
   background: #ffffff;
+  min-height: 100vh;
 }
 
 /* Single white card container - matches NeoNearBy */
 .app-container {
   display: flex;
   max-width: 800px;
-  width: 100%;
-  aspect-ratio: 1 / 1;
+  width: 800px;
+  height: 800px;
   background: #ffffff;
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   border: none;
   overflow: auto;
   gap: 0;
+}
+
+@media (max-width: 850px) {
+  .app-container {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1 / 1;
+  }
 }
 
 /* Sidebar - left section inside the card */
