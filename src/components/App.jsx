@@ -816,7 +816,7 @@ function App() {
                   id="text-input"
                   value={textInput}
                   onChange={(e) => setTextInput(e.target.value)}
-                  placeholder="Enter candidate information. Examples:&#10;- 'Sarah, 28 years old, 2 previous healthy pregnancies, vaginal deliveries, BMI 24, non-smoker'&#10;- '32 year old, 3 kids, 1 c-section, history of gestational diabetes'&#10;- '4 pregnancies, 2 were perfect, I had hyperemesis, I had GD diet controlled, 2 c-sections'&#10;&#10;Or paste medical records/lab results here."
+                  placeholder="e.g., '4 pregnancies, 2 were perfect, I had hyperemesis, I had GD diet controlled, 2 c-sections'&#10;&#10;Or paste medical records, lab results, etc. here."
                   rows={5}
                   style={{ width: '100%', padding: '8px', fontSize: '14px', border: '1px solid #d1d5db', borderRadius: '4px', fontFamily: 'inherit' }}
                 />
