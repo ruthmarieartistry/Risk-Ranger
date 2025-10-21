@@ -729,7 +729,7 @@ function App() {
         <div className="main-content">
         <div className="main-card">
           <div className="app-header">
-            <img src="/carry-calc-logo.png" alt="Carry Calc" className="header-logo" />
+            <img src="/riskrangerlogo.png" alt="Risk Ranger" className="header-logo" />
           </div>
 
           <div className="input-section">
