@@ -706,6 +706,14 @@ function App() {
               </div>
             )}
 
+            {/* Action Buttons */}
+            <button onClick={handleTextAnalysis} className="sidebar-btn" style={{ backgroundColor: rubyRed, marginTop: '20px' }}>
+              <span>Analyze</span>
+            </button>
+            <button onClick={handleReset} className="sidebar-btn" style={{ backgroundColor: '#6b7280', marginTop: '10px' }}>
+              <span>Reset</span>
+            </button>
+
             {/* MFM Suggested Alert */}
             {results && results.candidateData && results.candidateData.pregnancyHistory?.numberOfComplications > 1 && (
               <div className="mfm-alert-box">
@@ -808,15 +816,6 @@ function App() {
                   rows={8}
                   style={{ width: '100%', padding: '8px', fontSize: '14px', border: '1px solid #d1d5db', borderRadius: '4px', fontFamily: 'inherit' }}
                 />
-              </div>
-
-              <div className="button-group">
-                <button onClick={handleTextAnalysis} className="btn-primary">
-                  Analyze
-                </button>
-                <button onClick={handleReset} className="btn-secondary">
-                  Reset
-                </button>
               </div>
             </div>
           </div>
