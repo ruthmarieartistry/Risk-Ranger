@@ -599,14 +599,14 @@ function App() {
       <div className="app">
         <div className="app-container">
         {/* Sidebar */}
-        <aside className="sidebar">
+        <aside className="sidebar" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
           <div className="sidebar-logo">
             <p className="sidebar-label">CREATED FOR</p>
             <img src="/alcea-logo.png" alt="ALCEA Logo" className="alcea-logo" />
             <p className="sidebar-copyright">© RME 2025</p>
           </div>
 
-          <div className="sidebar-buttons">
+          <div className="sidebar-buttons" style={{ flex: '1', display: 'flex', flexDirection: 'column' }}>
             <button
               onClick={() => setShowHowToUse(true)}
               className="sidebar-btn how-to-btn"
@@ -706,22 +706,28 @@ function App() {
               </div>
             )}
 
+            {/* Spacer to push buttons to bottom */}
+            <div style={{ flex: '1' }}></div>
+
+            {/* Divider Line */}
+            <div style={{ width: '100%', height: '1px', backgroundColor: '#d1d5db', margin: '20px 0' }}></div>
+
             {/* Action Buttons */}
-            <button onClick={handleTextAnalysis} className="sidebar-btn" style={{ backgroundColor: rubyRed, marginTop: '20px' }}>
+            <button onClick={handleTextAnalysis} className="sidebar-btn" style={{ backgroundColor: rubyRed }}>
               <span>Analyze</span>
             </button>
             <button onClick={handleReset} className="sidebar-btn" style={{ backgroundColor: '#6b7280', marginTop: '10px' }}>
               <span>Reset</span>
             </button>
-
-            {/* MFM Suggested Alert */}
-            {results && results.candidateData && results.candidateData.pregnancyHistory?.numberOfComplications > 1 && (
-              <div className="mfm-alert-box">
-                <div className="mfm-alert-icon">🏥</div>
-                <span>MFM Suggested</span>
-              </div>
-            )}
           </div>
+
+          {/* MFM Suggested Alert */}
+          {results && results.candidateData && results.candidateData.pregnancyHistory?.numberOfComplications > 1 && (
+            <div className="mfm-alert-box">
+              <div className="mfm-alert-icon">🏥</div>
+              <span>MFM Suggested</span>
+            </div>
+          )}
         </aside>
 
         {/* Main content */}
