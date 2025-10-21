@@ -1,0 +1,40 @@
+<!-- RISK RANGER & NEONEARBY - SIDE BY SIDE (Equal Heights) -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 2000px; margin: 20px auto;">
+
+  <!-- Risk Ranger -->
+  <div style="background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column;">
+    <div style="background: #7d2431; color: white; padding: 15px 20px; font-size: 18px; font-weight: bold; text-align: center; flex-shrink: 0;">
+      Risk Ranger
+    </div>
+    <iframe
+      src="https://riskranger.netlify.app/"
+      title="Risk Ranger"
+      style="width: 100%; height: 900px; border: none; display: block; flex-grow: 1;"
+    ></iframe>
+  </div>
+
+  <!-- NeoNearBy -->
+  <div style="background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); overflow: hidden; display: flex; flex-direction: column;">
+    <div style="background: #217045; color: white; padding: 15px 20px; font-size: 18px; font-weight: bold; text-align: center; flex-shrink: 0;">
+      NeoNearBy
+    </div>
+    <iframe
+      src="https://neonearby.vercel.app/"
+      title="NeoNearBy"
+      style="width: 100%; height: 900px; border: none; display: block; flex-grow: 1;"
+    ></iframe>
+  </div>
+
+</div>
+
+<!-- Mobile: Stack vertically on small screens -->
+<style>
+@media (max-width: 1024px) {
+  div[style*="grid-template-columns: 1fr 1fr"] {
+    grid-template-columns: 1fr !important;
+  }
+  div[style*="grid-template-columns: 1fr 1fr"] iframe {
+    height: 700px !important;
+  }
+}
+</style>

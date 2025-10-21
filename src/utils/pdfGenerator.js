@@ -107,6 +107,7 @@ export function generatePDFReport(candidateData, assessmentResults, candidateNam
         if (condition === 'pregnancy_hypertension') conditionName = 'Pregnancy-Induced Hypertension (PIH)';
         if (condition === 'gestational_diabetes') conditionName = 'Gestational Diabetes';
         if (condition === 'hypertension') conditionName = 'Chronic Hypertension';
+        if (condition === 'bariatric_surgery') conditionName = 'Gastric Bypass / Bariatric Surgery';
         addText(`  • ${conditionName}`, 10);
       });
     }

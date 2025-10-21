@@ -234,6 +234,26 @@ function extractMedicalConditions(text) {
     conditions.push('pregnancy_hypertension'); // PIH (default assumption)
   }
 
+  // Check for gastric bypass / bariatric surgery
+  const gastricBypassKeywords = [
+    'gastric bypass',
+    'gastric by-pass',
+    'gastric by pass',
+    'bariatric surgery',
+    'bariatric',
+    'weight loss surgery',
+    'lap band',
+    'lapband',
+    'gastric sleeve',
+    'sleeve gastrectomy',
+    'roux-en-y',
+    'gastric banding'
+  ];
+  const hasGastricBypass = gastricBypassKeywords.some(keyword => lowerText.includes(keyword.toLowerCase()));
+  if (hasGastricBypass) {
+    conditions.push('bariatric_surgery');
+  }
+
   // Enhanced condition map with glossary abbreviations AND medical chart terminology
   const conditionMap = {
     // Remove hypertension from conditionMap since we handle it above

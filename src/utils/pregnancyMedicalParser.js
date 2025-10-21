@@ -38,12 +38,21 @@ export const PREGNANCY_PATTERNS = {
       /\bC\/S\b/i,  // C/S notation
       /\bCS\b/i,  // CS notation
       /\bLSCS\b/i,  // Lower Segment Cesarean Section
-      /\bC-section\b/i,
-      /cesarean\s+section/i,
-      /caesarean/i,
-      /primary\s+cesarean/i,
-      /repeat\s+cesarean/i,
-      /\bRCS\b/i  // Repeat Cesarean Section
+      /\bRCS\b/i,  // Repeat Cesarean Section
+      // C-section variations (with/without hyphens, singular/plural, with/without capitalization)
+      /\bc[\s-]?sections?\b/i,  // c-section, c section, c-sections, c sections, csection, csections
+      /\bC[\s-]?sections?\b/i,  // C-section, C section, C-sections, C sections, Csection, Csections
+      // Full word variations
+      /\bcesareans?\b/i,  // cesarean, cesareans
+      /\bcaesareans?\b/i,  // caesarean, caesareans (British spelling)
+      /\bces[ae]rean\s+sections?\b/i,  // cesarean section, caesarean section, cesarean sections, caesarean sections
+      /\bces[ae]rians?\b/i,  // cesarian, caesarian (common typo)
+      // Context phrases
+      /primary\s+c[\s-]?section/i,
+      /repeat\s+c[\s-]?section/i,
+      /emergency\s+c[\s-]?section/i,
+      /planned\s+c[\s-]?section/i,
+      /elective\s+c[\s-]?section/i
     ],
     operative: [
       /forceps\s+delivery/i,

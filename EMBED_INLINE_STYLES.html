@@ -1,0 +1,42 @@
+<!-- RISK RANGER & NEONEARBY - FULLY INLINE STYLES (No CSS Conflicts) -->
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 2000px; margin: 20px auto; width: 100%;">
+
+  <!-- Risk Ranger -->
+  <div style="background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); overflow: hidden;">
+    <div style="background: #7d2431; color: white; padding: 15px 20px; font-size: 18px; font-weight: bold; text-align: center; margin: 0;">
+      Risk Ranger
+    </div>
+    <iframe
+      src="https://riskranger.netlify.app/"
+      title="Risk Ranger - Medical Risk Assessment"
+      style="width: 100%; height: 800px; border: none; display: block; margin: 0; padding: 0;"
+      loading="lazy"
+    ></iframe>
+  </div>
+
+  <!-- NeoNearBy -->
+  <div style="background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); overflow: hidden;">
+    <div style="background: #217045; color: white; padding: 15px 20px; font-size: 18px; font-weight: bold; text-align: center; margin: 0;">
+      NeoNearBy
+    </div>
+    <iframe
+      src="https://neonearby.vercel.app/"
+      title="NeoNearBy - NICU Distance Finder"
+      style="width: 100%; height: 800px; border: none; display: block; margin: 0; padding: 0;"
+      loading="lazy"
+    ></iframe>
+  </div>
+
+</div>
+
+<!-- Mobile responsive styles -->
+<style>
+  @media (max-width: 1024px) {
+    div[style*="grid-template-columns: 1fr 1fr"] {
+      grid-template-columns: 1fr !important;
+    }
+    div[style*="grid-template-columns: 1fr 1fr"] iframe {
+      height: 600px !important;
+    }
+  }
+</style>

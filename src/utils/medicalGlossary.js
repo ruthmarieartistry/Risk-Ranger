@@ -690,6 +690,11 @@ export const CONDITION_SYNONYMS = {
   "IUGR": [
     "IUGR", "intrauterine growth restriction",
     "fetal growth restriction", "FGR", "small baby"
+  ],
+  "bariatric_surgery": [
+    "gastric bypass", "gastric by-pass", "bariatric surgery",
+    "weight loss surgery", "lap band", "gastric sleeve",
+    "sleeve gastrectomy", "roux-en-y", "gastric banding"
   ]
 };
 

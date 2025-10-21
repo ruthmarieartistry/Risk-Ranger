@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Risk Ranger & NeoNearBy</title>
+  <style>
+    /* Very specific class names to avoid conflicts */
+    .alcea-surrogacy-tools-container-v2 {
+      display: grid !important;
+      grid-template-columns: 1fr 1fr !important;
+      gap: 20px !important;
+      max-width: 2000px !important;
+      margin: 20px auto !important;
+      width: 100% !important;
+    }
+
+    .alcea-tool-wrapper-v2 {
+      background: white !important;
+      border-radius: 8px !important;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1) !important;
+      overflow: hidden !important;
+      min-height: 800px !important;
+    }
+
+    .alcea-tool-header-v2 {
+      color: white !important;
+      padding: 15px 20px !important;
+      font-size: 18px !important;
+      font-weight: bold !important;
+      text-align: center !important;
+      margin: 0 !important;
+    }
+
+    .alcea-tool-header-v2.risk-ranger {
+      background: #7d2431 !important;
+    }
+
+    .alcea-tool-header-v2.neonearby {
+      background: #217045 !important;
+    }
+
+    .alcea-tool-wrapper-v2 iframe {
+      width: 100% !important;
+      height: 800px !important;
+      border: none !important;
+      display: block !important;
+      margin: 0 !important;
+      padding: 0 !important;
+    }
+
+    /* Mobile: Stack vertically */
+    @media (max-width: 1024px) {
+      .alcea-surrogacy-tools-container-v2 {
+        grid-template-columns: 1fr !important;
+      }
+
+      .alcea-tool-wrapper-v2 iframe {
+        height: 600px !important;
+      }
+    }
+  </style>
+</head>
+<body style="margin: 0; padding: 0; background: #f5f5f5;">
+
+  <div class="alcea-surrogacy-tools-container-v2">
+    <!-- Risk Ranger -->
+    <div class="alcea-tool-wrapper-v2">
+      <div class="alcea-tool-header-v2 risk-ranger">Risk Ranger - Medical Risk Assessment</div>
+      <iframe
+        src="https://riskranger.netlify.app/"
+        title="Risk Ranger"
+        loading="lazy"
+        allow="clipboard-write"
+      ></iframe>
+    </div>
+
+    <!-- NeoNearBy -->
+    <div class="alcea-tool-wrapper-v2">
+      <div class="alcea-tool-header-v2 neonearby">NeoNearBy - NICU Distance Finder</div>
+      <iframe
+        src="https://neonearby.vercel.app/"
+        title="NeoNearBy"
+        loading="lazy"
+        allow="geolocation"
+      ></iframe>
+    </div>
+  </div>
+
+</body>
+</html>
