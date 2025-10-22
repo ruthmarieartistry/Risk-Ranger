@@ -1,0 +1,266 @@
+/**
+ * ZOHO CREATOR DELUGE SCRIPT
+ *
+ * Add this script to your Surrogate Application form
+ * Trigger: On Successful Submit
+ *
+ * This script:
+ * 1. Gathers all form field data
+ * 2. Sends to Vercel serverless function
+ * 3. Updates the application record with AI-generated summary
+ */
+
+// ============================================
+// STEP 1: Configure your Vercel function URL
+// ============================================
+webhookUrl = "https://your-project.vercel.app/api/process-application";
+// Replace with your actual Vercel deployment URL
+
+// ============================================
+// STEP 2: Gather all application form data
+// ============================================
+
+// Concatenate all relevant form fields into a single text block
+// Adjust field names to match YOUR Zoho Creator form field names
+
+applicationText = "SURROGATE APPLICATION\n\n";
+
+// Personal Information Section
+applicationText = applicationText + "PERSONAL INFORMATION:\n";
+applicationText = applicationText + "Name: " + input.First_Name + " " + input.Middle_Name + " " + input.Last_Name + "\n";
+applicationText = applicationText + "Goes By: " + input.Preferred_Name + "\n";
+applicationText = applicationText + "Preferred Pronouns: " + input.Pronouns + "\n";
+applicationText = applicationText + "Date of Birth: " + input.Date_of_Birth + "\n";
+applicationText = applicationText + "Age: " + input.Age + "\n";
+applicationText = applicationText + "Height: " + input.Height + "\n";
+applicationText = applicationText + "Weight: " + input.Weight + "\n";
+applicationText = applicationText + "BMI: " + input.BMI + "\n";
+applicationText = applicationText + "Relationship Status: " + input.Relationship_Status + "\n";
+applicationText = applicationText + "Employment Status: " + input.Employment_Status + "\n";
+if(input.Employment_Status == "Employed") {
+    applicationText = applicationText + "Job Title: " + input.Job_Title + "\n";
+}
+applicationText = applicationText + "Street Address: " + input.Street_Address + "\n";
+applicationText = applicationText + "City: " + input.City + "\n";
+applicationText = applicationText + "State: " + input.State + "\n";
+applicationText = applicationText + "ZIP: " + input.ZIP_Code + "\n";
+applicationText = applicationText + "Previous Surrogate: " + input.Previous_Surrogate + "\n";
+if(input.Previous_Surrogate == "Yes") {
+    applicationText = applicationText + "Number of Previous Journeys: " + input.Number_of_Previous_Journeys + "\n";
+    applicationText = applicationText + "Previous Journey Details: " + input.Previous_Journey_Details + "\n";
+}
+applicationText = applicationText + "\n";
+
+// Pregnancy History Section
+applicationText = applicationText + "PREGNANCY HISTORY:\n";
+applicationText = applicationText + "Number of Pregnancies: " + input.Number_of_Pregnancies + "\n";
+applicationText = applicationText + "Number of Live Births: " + input.Number_of_Live_Births + "\n";
+applicationText = applicationText + "Number of Miscarriages: " + input.Number_of_Miscarriages + "\n";
+if(input.Number_of_Miscarriages > 0) {
+    applicationText = applicationText + "Miscarriage Details: " + input.Miscarriage_Details + "\n";
+}
+applicationText = applicationText + "Number of Abortions: " + input.Number_of_Abortions + "\n";
+if(input.Number_of_Abortions > 0) {
+    applicationText = applicationText + "Abortion Details: " + input.Abortion_Details + "\n";
+}
+applicationText = applicationText + "Pregnancy Details/Complications: " + input.Pregnancy_Details + "\n";
+applicationText = applicationText + "\n";
+
+// Medical History Section
+applicationText = applicationText + "MEDICAL HISTORY:\n";
+applicationText = applicationText + "Current Medical Conditions: " + input.Medical_Conditions + "\n";
+applicationText = applicationText + "Current Medications: " + input.Current_Medications + "\n";
+applicationText = applicationText + "Allergies: " + input.Allergies + "\n";
+applicationText = applicationText + "Previous Surgeries: " + input.Previous_Surgeries + "\n";
+applicationText = applicationText + "Mental Health History: " + input.Mental_Health_History + "\n";
+applicationText = applicationText + "Smoking Status: " + input.Smoking_Status + "\n";
+applicationText = applicationText + "Vaping Status: " + input.Vaping_Status + "\n";
+applicationText = applicationText + "Alcohol Use: " + input.Alcohol_Use + "\n";
+applicationText = applicationText + "Drug Use: " + input.Drug_Use + "\n";
+applicationText = applicationText + "Dietary Restrictions: " + input.Dietary_Restrictions + "\n";
+applicationText = applicationText + "\n";
+
+// Household Information Section
+applicationText = applicationText + "HOUSEHOLD INFORMATION:\n";
+applicationText = applicationText + "Type of Home: " + input.Home_Type + "\n";
+applicationText = applicationText + "Home Ownership: " + input.Home_Ownership + "\n";
+applicationText = applicationText + "Number of Adults in Home: " + input.Number_of_Adults + "\n";
+applicationText = applicationText + "Number of Children in Home: " + input.Number_of_Children + "\n";
+if(input.Number_of_Children > 0) {
+    applicationText = applicationText + "Children Ages: " + input.Children_Ages + "\n";
+}
+applicationText = applicationText + "Smoke-Free Home: " + input.Smoke_Free_Home + "\n";
+if(input.Smoke_Free_Home == "No") {
+    applicationText = applicationText + "Smoking Agreement: " + input.Smoking_Agreement + "\n";
+}
+applicationText = applicationText + "Pets: " + input.Pets + "\n";
+if(input.Pets == "Yes") {
+    applicationText = applicationText + "Pet Details: " + input.Pet_Details + "\n";
+}
+applicationText = applicationText + "Firearms in Home: " + input.Firearms + "\n";
+if(input.Firearms == "Yes") {
+    applicationText = applicationText + "Firearm Storage/Licensing: " + input.Firearm_Details + "\n";
+}
+applicationText = applicationText + "\n";
+
+// OB/GYN Information Section
+applicationText = applicationText + "OB/GYN INFORMATION:\n";
+applicationText = applicationText + "Current Birth Control: " + input.Birth_Control + "\n";
+if(input.Birth_Control != "None") {
+    applicationText = applicationText + "Birth Control Details: " + input.Birth_Control_Details + "\n";
+}
+applicationText = applicationText + "Currently Breastfeeding: " + input.Currently_Breastfeeding + "\n";
+if(input.Currently_Breastfeeding == "Yes") {
+    applicationText = applicationText + "Breastfeeding Details: " + input.Breastfeeding_Details + "\n";
+}
+applicationText = applicationText + "\n";
+
+// Background Check Section
+applicationText = applicationText + "BACKGROUND INFORMATION:\n";
+applicationText = applicationText + "Criminal History (Self): " + input.Criminal_History_Self + "\n";
+if(input.Criminal_History_Self == "Yes") {
+    applicationText = applicationText + "Criminal History Details (Self): " + input.Criminal_History_Details_Self + "\n";
+}
+if(input.Relationship_Status == "Married" || input.Relationship_Status == "Partnered") {
+    applicationText = applicationText + "Criminal History (Partner): " + input.Criminal_History_Partner + "\n";
+    if(input.Criminal_History_Partner == "Yes") {
+        applicationText = applicationText + "Criminal History Details (Partner): " + input.Criminal_History_Details_Partner + "\n";
+    }
+}
+applicationText = applicationText + "\n";
+
+// ============================================
+// STEP 3: Call the webhook (Vercel function)
+// ============================================
+
+try {
+    // Prepare the payload
+    payload = {
+        "application_text": applicationText,
+        "application_id": input.ID,
+        "submitted_date": zoho.currentdate
+    };
+
+    // Call the Vercel function
+    response = invokeurl
+    [
+        url: webhookUrl
+        type: POST
+        parameters: payload.toString()
+        headers: {"Content-Type": "application/json"}
+    ];
+
+    // Check if the request was successful
+    if(response.get("success") == true) {
+
+        // ============================================
+        // STEP 4: Update the record with AI summary
+        // ============================================
+
+        formattedSummary = response.get("summary");
+        extractedFields = response.get("fields");
+        isGoldStar = response.get("is_gold_star");
+
+        // Update the current application record
+        input.Candidate_Summary = formattedSummary;
+        input.Summary_Generated = true;
+        input.Summary_Date = zoho.currenttime;
+
+        // Update extracted searchable fields
+        if(extractedFields.get("age") != null) {
+            input.Extracted_Age = extractedFields.get("age");
+        }
+        if(extractedFields.get("bmi") != null) {
+            input.Extracted_BMI = extractedFields.get("bmi");
+        }
+        if(extractedFields.get("state") != null) {
+            input.Extracted_State = extractedFields.get("state");
+        }
+        if(extractedFields.get("experienced_surrogate") != null) {
+            input.Experienced_Surrogate_Status = extractedFields.get("experienced_surrogate");
+        }
+        input.Has_Medical_Flags = extractedFields.get("has_medical_flags");
+        input.Has_Background_Flags = extractedFields.get("has_background_flags");
+        input.Has_Preterm_History = extractedFields.get("has_preterm_history");
+        input.Is_Gold_Star_Applicant = isGoldStar;
+
+        // ============================================
+        // STEP 5: Auto-set Application Status
+        // ============================================
+
+        if(isGoldStar == true) {
+            // Gold star applicants go to fast track
+            input.Application_Status = "⭐ Gold Star - Fast Track";
+
+        } else if(extractedFields.get("has_medical_flags") == true
+                  || extractedFields.get("has_background_flags") == true
+                  || extractedFields.get("has_preterm_history") == true) {
+            // Flagged applicants go to review
+            input.Application_Status = "🔍 Under Review";
+
+        } else {
+            // Clean applicants but not gold star
+            input.Application_Status = "🆕 New Application";
+        }
+
+        info "AI Summary generated successfully for application " + input.ID;
+        info "Application status set to: " + input.Application_Status;
+
+    } else {
+        // Log error if webhook failed
+        info "Failed to generate AI summary: " + response.toString();
+        input.Summary_Generated = false;
+    }
+
+} catch (e) {
+    // Handle any errors
+    info "Error calling AI summary webhook: " + e.toString();
+    input.Summary_Generated = false;
+}
+
+// End of script
+
+/*
+============================================
+REQUIRED FIELDS IN YOUR ZOHO FORM
+============================================
+
+You need to add these fields to your Application form:
+
+LONG TEXT FIELD:
+- Candidate_Summary (Multi-line text, read-only)
+
+CHECKBOX FIELDS:
+- Summary_Generated (Yes/No)
+- Has_Medical_Flags (Yes/No)
+- Has_Background_Flags (Yes/No)
+- Has_Preterm_History (Yes/No)
+- Is_Gold_Star_Applicant (Yes/No)
+
+DROPDOWN FIELD:
+- Application_Status (with options: 🆕 New Application, ⭐ Gold Star - Fast Track, 🔍 Under Review, ✅ Approved for Matching, 📞 Contacted, 🤝 In Process, ⏸️ On Hold, ❌ Declined, 📁 Archived)
+
+DATE/TIME FIELD:
+- Summary_Date (Date-Time)
+
+NUMBER FIELDS:
+- Extracted_Age (Number)
+- Extracted_BMI (Decimal, 1 decimal place)
+
+TEXT FIELDS:
+- Extracted_State (Single line text)
+- Experienced_Surrogate_Status (Single line text)
+
+============================================
+FIELD NAME MAPPING
+============================================
+
+Update the field names in this script to match YOUR form:
+- input.First_Name → your actual first name field
+- input.Medical_Conditions → your actual medical conditions field
+- etc.
+
+The field names on the LEFT side of the script should match
+exactly what you named the fields in Zoho Creator.
+
+*/
