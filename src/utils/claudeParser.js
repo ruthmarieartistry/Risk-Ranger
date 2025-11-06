@@ -168,12 +168,12 @@ function validateAndCleanParsedData(data, userProvidedData = {}) {
   if (userProvidedData.age && userProvidedData.age.trim() !== '') {
     age = parseInt(userProvidedData.age);
   } else if (data.age) {
-    // Validate age is reasonable for surrogacy (18-50)
+    // Validate age is reasonable for surrogacy (21-43 per ASRM guidelines)
     const parsedAge = parseInt(data.age);
-    if (parsedAge >= 18 && parsedAge <= 50) {
+    if (parsedAge >= 21 && parsedAge <= 43) {
       age = parsedAge;
     } else {
-      console.warn(`Invalid age extracted: ${parsedAge}. Ignoring.`);
+      console.warn(`Invalid age extracted: ${parsedAge}. Must be 21-43 for surrogacy. Ignoring.`);
       age = undefined;
     }
   }
