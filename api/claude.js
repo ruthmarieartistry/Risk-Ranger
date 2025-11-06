@@ -85,11 +85,12 @@ ${deidentifiedText}
 FOCUS ON: We only need pregnancy/delivery history and pre-existing medical conditions from the records.
 DO NOT try to extract age, height, weight, or BMI from the medical records - those are entered separately by the user
 
-Return a JSON object with this EXACT structure:
+Return a JSON object with this EXACT structure (matches frontend expectations):
 {
+  "age": number or null,
   "pregnancyHistory": {
-    "numberOfTermPregnancies": <number>,
-    "numberOfCesareans": <number>,
+    "numberOfTermPregnancies": <number - count actual pregnancies/deliveries, NOT years or dates>,
+    "numberOfCesareans": <number - count C-sections, NOT years>,
     "numberOfComplications": <number>,
     "complications": [
       {
@@ -101,15 +102,15 @@ Return a JSON object with this EXACT structure:
     ]
   },
   "medicalConditions": [
-    "<ONLY confirmed ACTIVE chronic conditions - NOT family history, NOT ruled out, NOT past resolved conditions. Examples: pregnancy_hypertension|hypertension|gestational_diabetes|preeclampsia|diabetes|thyroid_disorder|asthma. IMPORTANT: If a condition is only mentioned in context like 'denies', 'no history of', 'family history', 'r/o' (rule out), or monitoring/screening - DO NOT include it>"
+    "<ONLY confirmed ACTIVE chronic conditions - NOT pregnancy complications, NOT family history, NOT ruled out, NOT 'denies' statements. CRITICAL: Do NOT include conditions like cardiac_disease, kidney_disease, thyroid_disorder, asthma, cancer if they appear in 'denies' or 'no history of' or 'family history' context. Examples of ACTUAL conditions to include: hypertension (if currently diagnosed), diabetes (if currently diagnosed), hypothyroidism (if currently treated)>"
   ],
   "surgicalHistory": [
-    "<procedures like cholecystectomy, tubal ligation, appendectomy, etc>"
+    "<procedures like cholecystectomy, tubal ligation, appendectomy, etc - NOT C-sections (those go in pregnancyHistory)>"
   ],
   "documentationGaps": [
-    "<list any incomplete documentation issues like 'Missing delivery records for Pregnancy 3' or 'Records only through 35 weeks, no delivery documentation' or empty array if complete>"
+    "<list any incomplete documentation issues or empty array if complete>"
   ],
-  "pregnancySummary": "A detailed chronological narrative of each pregnancy with a blank line between each pregnancy. Example format: 'Pregnancy 1 (2011): Full-term vaginal delivery at 40 weeks, birth weight 7lbs 2oz, no complications reported.\\n\\nPregnancy 2 (2015): Cesarean delivery at 39 weeks due to breech presentation, birth weight 8lbs 1oz, complicated by mild preeclampsia managed with medication.\\n\\nPregnancy 3 (2019): Repeat cesarean delivery at 38 weeks, birth weight 7lbs 10oz, history of gestational diabetes controlled with diet.' Include for EACH pregnancy: year, delivery method, gestational age, birth weight if available, and any complications. IMPORTANT: Separate each pregnancy with TWO newline characters (\\n\\n) for readability. If delivery records are missing, note this in the summary."
+  "pregnancySummary": "A detailed chronological narrative of each pregnancy separated by \\n\\n"
 }
 
 Return ONLY the JSON object, no other text`;
