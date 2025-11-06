@@ -112,6 +112,8 @@ Return a JSON object with this EXACT structure:
 Return ONLY the JSON object, no other text.`;
 
   try {
+    console.log('🔵 Calling /api/claude serverless function...');
+
     // Call Vercel serverless function (keeps API key secure on server)
     const response = await fetch('/api/claude', {
       method: 'POST',
@@ -125,18 +127,24 @@ Return ONLY the JSON object, no other text.`;
       })
     });
 
+    console.log('🔵 Response status:', response.status);
+
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Claude API error: ${response.status} - ${errorData.error || 'Unknown error'}`);
+      console.error('🔴 API error response:', errorData);
+      throw new Error(`Claude API error: ${response.status} - ${JSON.stringify(errorData)}`);
     }
 
     const result = await response.json();
+    console.log('🔵 API result:', result);
 
     if (!result.success) {
+      console.error('🔴 API returned unsuccessful');
       throw new Error('Claude API returned unsuccessful response');
     }
 
     const parsedData = result.data;
+    console.log('✅ Claude parsing successful!');
 
     // Validate and clean the data, passing in user-provided age/BMI
     return validateAndCleanParsedData(parsedData, userProvidedData);
