@@ -5,6 +5,37 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Surrogacy Risk Assessment Tool - ASRM Guidelines</title>
     <meta name="description" content="Medical risk assessment tool for gestational carrier candidates based on ASRM guidelines" />
+    <style>
+      /* Iframe-safe CSS reset to prevent layout breaking in embedded contexts */
+      * {
+        box-sizing: border-box !important;
+      }
+      html, body {
+        margin: 0 !important;
+        padding: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        overflow-x: hidden !important;
+      }
+      #root {
+        width: 100% !important;
+        height: 100% !important;
+        position: relative;
+      }
+      /* Force images to stay contained */
+      img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+      /* Prevent flex/grid breaking in iframes */
+      .header-logo, .alcea-logo {
+        width: 100% !important;
+        max-width: 280px;
+        height: auto !important;
+        object-fit: contain !important;
+      }
+    </style>
   </head>
   <body>
     <div id="root"></div>
