@@ -1,6 +1,6 @@
 {
   "name": "surrogacy-risk-assessment",
-  "version": "1.0.0",
+  "version": "2.0.1",
   "description": "Medical risk assessment tool for gestational carrier candidates based on ASRM guidelines",
   "main": "src/index.js",
   "type": "module",

@@ -1,3 +1,4 @@
+// Risk Ranger v2.0.1 - Claude AI serverless functions
 import { useState } from 'react';
 import './App.css';
 import { parseTextInput, extractAndSummarize } from '../utils/textParser.js';
