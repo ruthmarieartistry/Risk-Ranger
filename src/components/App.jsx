@@ -32,9 +32,9 @@ function App() {
   });
   const [showClaudeSettings, setShowClaudeSettings] = useState(false);
   const [useClaudeParser, setUseClaudeParser] = useState(() => {
-    // Load preference from localStorage, default to false (deterministic parser)
+    // Load preference from localStorage, default to TRUE (Claude is the standard parser)
     const saved = localStorage.getItem('useClaudeParser');
-    return saved !== null ? saved === 'true' : false;
+    return saved !== null ? saved === 'true' : true;
   });
   const [clinicalNarratives, setClinicalNarratives] = useState(null);
 
@@ -94,7 +94,7 @@ function App() {
 
           candidateData = await parseMedicalText(result.text, {
             claudeApiKey: claudeApiKey,
-            useClaudeParser: useClaudeParser,
+            useClaudeParser: true, // Always use Claude if API key is present
             candidateName: candidateName,
             userProvidedData: {
               age: candidateAge,
@@ -196,7 +196,7 @@ function App() {
 
           candidateData = await parseMedicalText(combinedText, {
             claudeApiKey: claudeApiKey,
-            useClaudeParser: useClaudeParser,
+            useClaudeParser: true, // Always use Claude if API key is present
             candidateName: candidateName,
             userProvidedData: {
               age: candidateAge,
@@ -285,7 +285,7 @@ function App() {
           age: candidateAge,
           bmi: candidateBMI
         },
-        useClaudeParser: useClaudeParser
+        useClaudeParser: true // Always use Claude if API key is present
       });
 
       candidateData.name = candidateName || 'The candidate';
