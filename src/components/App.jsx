@@ -597,48 +597,90 @@ function App() {
   return (
     <>
       <div className="app">
-        <div className="app-container">
-        {/* Sidebar */}
-        <aside className="sidebar" style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
-          <div className="sidebar-logo" style={{ padding: '12px', marginBottom: '16px' }}>
-            <img src="/alcea-logo.png" alt="ALCEA Logo" className="alcea-logo" style={{ width: '80%', margin: '0 auto', display: 'block' }} />
+        <div className="app-container-single">
+        {/* Single Column Layout - matches NeoNearBy */}
+        <div className="main-content-full">
+        <div className="main-card">
+          <div className="app-header">
+            <img src="/riskrangerlogo.png" alt="Risk Ranger" className="header-logo" />
+            <p style={{ fontSize: '14px', color: '#6b7280', marginTop: '8px', marginBottom: '16px' }}>
+              Made for Alcea Surrogacy, © RME 2025 [v2.0]
+            </p>
           </div>
 
-          <div className="sidebar-buttons" style={{ flex: '1', display: 'flex', flexDirection: 'column' }}>
+          {/* Action Buttons Row - matches NeoNearBy */}
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', padding: '0 12px' }}>
             <button
               onClick={() => setShowHowToUse(true)}
-              className="sidebar-btn how-to-btn"
-              style={{ backgroundColor: goldBrown }}
+              style={{
+                flex: 1,
+                backgroundColor: goldBrown,
+                color: 'white',
+                border: 'none',
+                borderRadius: '12px',
+                padding: '12px 20px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
             >
-              <div className="btn-icon">?</div>
+              <span>❓</span>
               <span>How To Use</span>
             </button>
 
             <button
               onClick={() => setShowMethod(true)}
-              className="sidebar-btn method-btn"
-              style={{ backgroundColor: mustardYellow }}
+              style={{
+                flex: 1,
+                backgroundColor: mustardYellow,
+                color: 'white',
+                border: 'none',
+                borderRadius: '12px',
+                padding: '12px 20px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
             >
-              <svg className="btn-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-              </svg>
-              <span>Method & Reliability</span>
+              <span>📋</span>
+              <span>Method</span>
             </button>
+          </div>
 
+          {/* AI Settings Collapsible */}
+          <div style={{ padding: '0 12px', marginBottom: '20px' }}>
             <button
               onClick={() => setShowClaudeSettings(!showClaudeSettings)}
-              className="sidebar-btn claude-settings-btn"
-              style={{ backgroundColor: darkTeal }}
+              style={{
+                width: '100%',
+                backgroundColor: darkTeal,
+                color: 'white',
+                border: 'none',
+                borderRadius: '12px',
+                padding: '12px 20px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
             >
-              <svg className="btn-icon-svg" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-              </svg>
+              <span>⚙️</span>
               <span>AI Parser Settings</span>
             </button>
 
             {showClaudeSettings && (
-              <div className="claude-settings-panel" style={{ backgroundColor: '#f9fafb', padding: '15px', borderRadius: '8px', marginTop: '10px' }}>
+              <div style={{ backgroundColor: '#f9fafb', padding: '15px', borderRadius: '8px', marginTop: '10px', border: '1px solid #e5e7eb' }}>
                 <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: darkTeal }}>Advanced Medical Record Parsing</h4>
                 <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '10px' }}>
                   For complex medical records, enable AI-powered parsing to accurately extract pregnancy history, complications, and medical conditions from clinical notes.
@@ -703,33 +745,6 @@ function App() {
                 )}
               </div>
             )}
-
-            {/* Divider Line */}
-            <div style={{ width: '100%', height: '1px', backgroundColor: '#d1d5db', margin: '16px 0' }}></div>
-
-            {/* Action Buttons */}
-            <button onClick={handleTextAnalysis} className="sidebar-btn" style={{ backgroundColor: rubyRed }}>
-              <span>Analyze</span>
-            </button>
-            <button onClick={handleReset} className="sidebar-btn" style={{ backgroundColor: '#6b7280', marginTop: '10px' }}>
-              <span>Reset</span>
-            </button>
-          </div>
-
-          {/* MFM Suggested Alert */}
-          {results && results.candidateData && results.candidateData.pregnancyHistory?.numberOfComplications > 1 && (
-            <div className="mfm-alert-box">
-              <div className="mfm-alert-icon">🏥</div>
-              <span>MFM Suggested</span>
-            </div>
-          )}
-        </aside>
-
-        {/* Main content */}
-        <div className="main-content">
-        <div className="main-card">
-          <div className="app-header">
-            <img src="/riskrangerlogo.png" alt="Risk Ranger" className="header-logo" />
           </div>
 
           <div className="input-section">
@@ -832,17 +847,66 @@ function App() {
                 />
               </div>
 
-              {/* Attribution Footer */}
-              <div style={{ marginTop: '20px', paddingTop: '15px', borderTop: '1px solid #e5e7eb', textAlign: 'right' }}>
-                <p style={{ fontSize: '11px', color: '#9ca3af', margin: 0 }}>
-                  Made for Alcea Surrogacy © 2025 Ruth Ellis
-                </p>
+              {/* Analyze and Reset Buttons */}
+              <div style={{ display: 'flex', gap: '12px', marginTop: '20px' }}>
+                <button
+                  onClick={handleTextAnalysis}
+                  style={{
+                    flex: 1,
+                    backgroundColor: rubyRed,
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '14px 24px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Analyze
+                </button>
+                <button
+                  onClick={handleReset}
+                  style={{
+                    flex: 1,
+                    backgroundColor: '#6b7280',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '14px 24px',
+                    fontSize: '16px',
+                    fontWeight: '600',
+                    cursor: 'pointer'
+                  }}
+                >
+                  Reset
+                </button>
               </div>
+
+              {/* MFM Alert */}
+              {results && results.candidateData && results.candidateData.pregnancyHistory?.numberOfComplications > 1 && (
+                <div style={{
+                  marginTop: '16px',
+                  padding: '14px 16px',
+                  borderRadius: '12px',
+                  backgroundColor: '#ef4444',
+                  color: 'white',
+                  fontWeight: '600',
+                  fontSize: '14px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '12px',
+                  boxShadow: '0 4px 12px rgba(239, 68, 68, 0.3)'
+                }}>
+                  <span style={{ fontSize: '24px' }}>🏥</span>
+                  <span>MFM Suggested</span>
+                </div>
+              )}
             </div>
           </div>
         </div>
-        </div> {/* End main-content */}
-        </div> {/* End app-container with sidebar */}
+        </div> {/* End main-content-full */}
+        </div> {/* End app-container-single */}
       </div> {/* End app */}
 
       {/* Results Section - Full Width Below */}
