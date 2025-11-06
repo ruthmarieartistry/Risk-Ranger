@@ -26,29 +26,9 @@ function App() {
   const [showHowToUse, setShowHowToUse] = useState(false);
   const [showMethod, setShowMethod] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState('');
-  const [claudeApiKey, setClaudeApiKey] = useState(() => {
-    // Load API key from localStorage on initial render
-    return localStorage.getItem('claudeApiKey') || '';
-  });
-  const [showClaudeSettings, setShowClaudeSettings] = useState(false);
-  const [useClaudeParser, setUseClaudeParser] = useState(() => {
-    // Load preference from localStorage, default to TRUE (Claude is the standard parser)
-    const saved = localStorage.getItem('useClaudeParser');
-    return saved !== null ? saved === 'true' : true;
-  });
+  // API key from environment variable (set in Vercel dashboard)
+  const claudeApiKey = import.meta.env.VITE_CLAUDE_API_KEY || '';
   const [clinicalNarratives, setClinicalNarratives] = useState(null);
-
-  // Save API key to localStorage whenever it changes
-  const handleApiKeyChange = (newKey) => {
-    setClaudeApiKey(newKey);
-    localStorage.setItem('claudeApiKey', newKey);
-  };
-
-  // Save parser preference to localStorage whenever it changes
-  const handleParserToggle = (enabled) => {
-    setUseClaudeParser(enabled);
-    localStorage.setItem('useClaudeParser', enabled.toString());
-  };
 
   // Brand colors - Alcea Surrogacy Branding
   const rubyRed = '#7d2431';
@@ -84,13 +64,12 @@ function App() {
           let candidateData;
 
           // Use Claude if enabled and API key is present
-          console.log('useClaudeParser:', useClaudeParser);
           console.log('claudeApiKey length:', claudeApiKey?.length);
-          console.log('Will use Claude?', useClaudeParser && claudeApiKey);
+          console.log('Will use Claude? true (hardcoded API key)');
 
           // Use cascading parser (Layers 1-3) - same as text analysis
           console.log('Using cascading parser for file upload...');
-          setResults({ loading: true, fileName: file.name, usingClaude: useClaudeParser && claudeApiKey });
+          setResults({ loading: true, fileName: file.name, usingClaude: true });
 
           candidateData = await parseMedicalText(result.text, {
             claudeApiKey: claudeApiKey,
@@ -122,7 +101,7 @@ function App() {
           console.log('Candidate data:', candidateData);
 
           // Generate clinical narratives using Claude
-          if (useClaudeParser && claudeApiKey) {
+          if (claudeApiKey) { // Always use Claude (hardcoded API key)
             console.log('Generating clinical narratives with Claude...');
             try {
               const narratives = await generateClinicalNarratives(candidateData, assessment, claudeApiKey);
@@ -186,13 +165,12 @@ function App() {
           let candidateData;
 
           // Use Claude if enabled and API key is present
-          console.log('useClaudeParser:', useClaudeParser);
           console.log('claudeApiKey length:', claudeApiKey?.length);
-          console.log('Will use Claude?', useClaudeParser && claudeApiKey);
+          console.log('Will use Claude? true (hardcoded API key)');
 
           // Use cascading parser (Layers 1-3) - same as text analysis
           console.log('Using cascading parser for combined files...');
-          setResults({ loading: true, fileName: `${files.length} files`, usingClaude: useClaudeParser && claudeApiKey });
+          setResults({ loading: true, fileName: `${files.length} files`, usingClaude: true });
 
           candidateData = await parseMedicalText(combinedText, {
             claudeApiKey: claudeApiKey,
@@ -218,7 +196,7 @@ function App() {
           setResults(assessment);
 
           // Generate clinical narratives
-          if (useClaudeParser && claudeApiKey) {
+          if (claudeApiKey) { // Always use Claude (hardcoded API key)
             try {
               const narratives = await generateClinicalNarratives(candidateData, assessment, claudeApiKey);
               setClinicalNarratives(narratives);
@@ -764,98 +742,6 @@ function App() {
                 >
                   Reset
                 </button>
-              </div>
-
-              {/* AI Settings Collapsible - Moved to bottom */}
-              <div style={{ marginTop: '20px' }}>
-                <button
-                  onClick={() => setShowClaudeSettings(!showClaudeSettings)}
-                  style={{
-                    width: '100%',
-                    backgroundColor: darkTeal,
-                    color: 'white',
-                    border: 'none',
-                    borderRadius: '12px',
-                    padding: '12px 20px',
-                    fontSize: '14px',
-                    fontWeight: '600',
-                    cursor: 'pointer',
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    gap: '8px'
-                  }}
-                >
-                  <span>⚙️</span>
-                  <span>AI Parser Settings</span>
-                </button>
-
-                {showClaudeSettings && (
-                  <div style={{ backgroundColor: '#f9fafb', padding: '15px', borderRadius: '8px', marginTop: '10px', border: '1px solid #e5e7eb' }}>
-                    <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: darkTeal }}>Advanced Medical Record Parsing</h4>
-                    <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '10px' }}>
-                      For complex medical records, enable AI-powered parsing to accurately extract pregnancy history, complications, and medical conditions from clinical notes.
-                    </p>
-                    <div style={{ marginBottom: '10px' }}>
-                      <label style={{ display: 'flex', alignItems: 'center', fontSize: '13px', cursor: 'pointer' }}>
-                        <input
-                          type="checkbox"
-                          checked={useClaudeParser}
-                          onChange={(e) => handleParserToggle(e.target.checked)}
-                          style={{ marginRight: '8px' }}
-                        />
-                        Enable AI Medical Record Parser
-                      </label>
-                    </div>
-                    {useClaudeParser && (
-                      <div>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                          <label style={{ fontSize: '12px', color: '#374151', fontWeight: '500' }}>
-                            API Key:
-                          </label>
-                          {claudeApiKey && (
-                            <button
-                              onClick={() => handleApiKeyChange('')}
-                              style={{
-                                fontSize: '11px',
-                                color: rubyRed,
-                                background: 'none',
-                                border: 'none',
-                                cursor: 'pointer',
-                                textDecoration: 'underline'
-                              }}
-                            >
-                              Clear
-                            </button>
-                          )}
-                        </div>
-                        <input
-                          type="password"
-                          value={claudeApiKey}
-                          onChange={(e) => handleApiKeyChange(e.target.value)}
-                          placeholder=""
-                          style={{
-                            width: '100%',
-                            padding: '6px 8px',
-                            fontSize: '12px',
-                            border: '1px solid #d1d5db',
-                            borderRadius: '4px',
-                            marginTop: '4px'
-                          }}
-                        />
-                        <p style={{ fontSize: '11px', color: '#6b7280', marginTop: '6px', marginBottom: '0' }}>
-                          Get your API key from{' '}
-                          <a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer" style={{ color: darkTeal }}>
-                            console.anthropic.com
-                          </a>
-                        </p>
-                        <div style={{ fontSize: '11px', color: '#059669', marginTop: '8px', padding: '6px 8px', backgroundColor: '#d1fae5', borderRadius: '4px', border: '1px solid #10b981' }}>
-                          ✓ HIPAA Compliant: Patient names and dates are automatically de-identified before AI processing
-                        </div>
-                      </div>
-                    )}
-                  </div>
-                )}
               </div>
 
               {/* MFM Alert */}
