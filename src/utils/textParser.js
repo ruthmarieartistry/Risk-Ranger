@@ -35,7 +35,14 @@ function extractAge(text) {
   for (const pattern of patterns) {
     const match = text.match(pattern);
     if (match) {
-      return parseInt(match[1], 10);
+      const age = parseInt(match[1], 10);
+      // Validate age is reasonable for surrogacy (21-43 per ASRM guidelines)
+      if (age >= 21 && age <= 43) {
+        return age;
+      } else {
+        console.warn(`Invalid age extracted: ${age}. Must be 21-43 for surrogacy. Ignoring.`);
+        continue; // Try next pattern
+      }
     }
   }
 
@@ -279,14 +286,48 @@ function extractMedicalConditions(text) {
     'gastritis': ['gastritis']
   };
 
+  // Helper function to check if a condition mention is a negative/denial
+  const isNegativeMention = (text, keyword) => {
+    const keywordIndex = text.indexOf(keyword.toLowerCase());
+    if (keywordIndex === -1) return false;
+
+    // Get context around the keyword (50 chars before and after)
+    const start = Math.max(0, keywordIndex - 50);
+    const end = Math.min(text.length, keywordIndex + keyword.length + 50);
+    const context = text.substring(start, end);
+
+    // Check for negative indicators
+    const negativePatterns = [
+      'no history of',
+      'denies',
+      'denied',
+      'negative for',
+      'rule out',
+      'r/o',
+      'family history',
+      'mother has',
+      'father has',
+      'sister has',
+      'brother has',
+      'screened for',
+      'monitoring for',
+      'no evidence of',
+      'unremarkable',
+      'within normal limits',
+      'wn'
+    ];
+
+    return negativePatterns.some(pattern => context.includes(pattern));
+  };
+
   Object.keys(conditionMap).forEach(condition => {
     // Check if any keyword matches
-    const hasMatch = conditionMap[condition].some(keyword =>
+    const matchedKeyword = conditionMap[condition].find(keyword =>
       lowerText.includes(keyword.toLowerCase())
     );
 
-    // Only add if matched AND not already in the array
-    if (hasMatch && !conditions.includes(condition)) {
+    // Only add if matched AND not a negative mention AND not already in the array
+    if (matchedKeyword && !isNegativeMention(lowerText, matchedKeyword) && !conditions.includes(condition)) {
       conditions.push(condition);
     }
   });
