@@ -163,8 +163,21 @@ Return ONLY the JSON object, no other text.`;
  * @param {Object} userProvidedData - User-entered data to use instead of extracted data
  */
 function validateAndCleanParsedData(data, userProvidedData = {}) {
-  // Use user-provided age and BMI if available, otherwise fall back to parsed data
-  const age = userProvidedData.age ? parseInt(userProvidedData.age) : (data.age || undefined);
+  // CRITICAL: ALWAYS use user-provided age/BMI if present - NEVER let Claude override it
+  let age = undefined;
+  if (userProvidedData.age && userProvidedData.age.trim() !== '') {
+    age = parseInt(userProvidedData.age);
+  } else if (data.age) {
+    // Validate age is reasonable for surrogacy (18-50)
+    const parsedAge = parseInt(data.age);
+    if (parsedAge >= 18 && parsedAge <= 50) {
+      age = parsedAge;
+    } else {
+      console.warn(`Invalid age extracted: ${parsedAge}. Ignoring.`);
+      age = undefined;
+    }
+  }
+
   const bmi = userProvidedData.bmi ? parseFloat(userProvidedData.bmi) : (data.bmi || undefined);
 
   // Ensure required fields exist
