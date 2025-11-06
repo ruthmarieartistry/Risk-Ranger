@@ -720,30 +720,10 @@ function App() {
                 </div>
               </div>
 
-              {/* Medical Records Upload */}
-              <div className="upload-section">
-                <input
-                  type="file"
-                  id="file-upload"
-                  accept=".txt,.pdf,.doc,.docx"
-                  multiple
-                  onChange={handleFileUpload}
-                  style={{ display: 'none' }}
-                />
-                <label htmlFor="file-upload" className="btn-upload">
-                  📄 Upload Medical Records (Auto-Analyzes)
-                </label>
-                {uploadedFileName && (
-                  <span className="uploaded-file-name">
-                    ✓ {uploadedFileName}
-                  </span>
-                )}
-              </div>
-
-              {/* Main Text Input Box */}
+              {/* Ask Question Section */}
               <div style={{ marginTop: '20px' }}>
                 <label htmlFor="text-input" style={{ fontSize: '14px', fontWeight: '500', color: '#374151', display: 'block', marginBottom: '6px' }}>
-                  Medical Information <span style={{ fontWeight: 'normal', color: '#9ca3af', fontSize: '12px' }}>(optional if uploading file)</span>
+                  Ask Question <span style={{ fontWeight: 'normal', color: '#9ca3af', fontSize: '12px' }}>(optional)</span>
                 </label>
                 <textarea
                   id="text-input"
@@ -753,6 +733,26 @@ function App() {
                   rows={4}
                   style={{ width: '100%', padding: '8px', fontSize: '13px', border: '1px solid #d1d5db', borderRadius: '4px', fontFamily: 'inherit' }}
                 />
+              </div>
+
+              {/* Medical Records Upload */}
+              <div className="upload-section" style={{ marginTop: '15px' }}>
+                <input
+                  type="file"
+                  id="file-upload"
+                  accept=".txt,.pdf,.doc,.docx"
+                  multiple
+                  onChange={handleFileUpload}
+                  style={{ display: 'none' }}
+                />
+                <label htmlFor="file-upload" className="btn-upload">
+                  📄 and/or Upload Pregnancy Records (Auto-Analyzes)
+                </label>
+                {uploadedFileName && (
+                  <span className="uploaded-file-name">
+                    ✓ {uploadedFileName}
+                  </span>
+                )}
               </div>
 
               {/* Analyze and Reset Buttons */}
