@@ -45,16 +45,23 @@ export async function parseWithClaude(medicalRecordText, apiKey, patientName = '
   const prompt = `You are a medical record analyzer for gestational carrier (surrogate) screening. Parse the following medical records and extract ONLY factual information into a structured format.
 
 IMPORTANT RULES:
-1. Count complications intelligently - group related issues together
+1. **ONLY extract CONFIRMED ACTIVE diagnoses** - Do NOT include:
+   - Family history (e.g., "mother has diabetes" - NOT the candidate's condition)
+   - Differential diagnoses or "rule out" conditions (e.g., "r/o cardiac disease" - NOT confirmed)
+   - Past resolved conditions (e.g., "history of asthma as child, resolved" - NOT active)
+   - Conditions mentioned in background/review of systems without confirmation
+   - Example: If record says "denies cardiac disease" or "no history of kidney disease" - DO NOT add these
+   - Example: If record mentions "IUGR" in context of monitoring or screening but NOT as diagnosed - DO NOT add it
+2. Count complications intelligently - group related issues together
    - Example: "hyperemesis + PICC line + TPN + hospitalization" = 1 complication (severe hyperemesis)
    - Example: "gastroparesis + severe GERD + gallstones in same pregnancy" = 1 complication (GI complications)
-2. Distinguish between pregnancy-induced conditions vs chronic conditions
+3. Distinguish between pregnancy-induced conditions vs chronic conditions
    - PIH, gestational hypertension = pregnancy-related
    - Chronic hypertension, essential hypertension = chronic condition
-3. Extract complications PER PREGNANCY, then count total unique complication types
-4. Do NOT make recommendations or predictions - just extract facts
-5. NOTE: Patient identifiers have been removed for privacy (HIPAA compliance)
-6. CRITICAL - Preterm labor/birth definition (READ CAREFULLY):
+4. Extract complications PER PREGNANCY, then count total unique complication types
+5. Do NOT make recommendations or predictions - just extract facts
+6. NOTE: Patient identifiers have been removed for privacy (HIPAA compliance)
+8. CRITICAL - Preterm labor/birth definition (READ CAREFULLY):
    - Preterm = delivery BEFORE 37 weeks gestational age ONLY
    - 37 weeks or later = FULL TERM (NOT preterm)
    - YOU MUST CHECK THE ACTUAL DELIVERY GESTATIONAL AGE
@@ -62,13 +69,13 @@ IMPORTANT RULES:
    - "Prolonged labor", "prodromal labor", "slow labor", "labor for 3 days", "spontaneous labor" = NOT preterm (these describe labor characteristics, not timing)
    - Examples of FULL TERM (NOT preterm): "delivery at 38 weeks 5 days", "39 weeks 2 days", "40 weeks"
    - Examples of PRETERM: "delivery at 35 weeks", "delivered at 34 weeks 6 days", "preterm birth at 32 weeks"
-7. CRITICAL - Membrane rupture (NOT complications):
+9. CRITICAL - Membrane rupture (NOT complications):
    - "Artificial rupture of membranes" (AROM) = ROUTINE PROCEDURE (NOT a complication)
    - "Amniotomy" = ROUTINE PROCEDURE (NOT a complication)
    - "Rupture of membranes with Pitocin" = ROUTINE INDUCTION PROCEDURE (NOT a complication)
    - ONLY count as complication if PPROM (preterm premature rupture) BEFORE 37 weeks
    - At term (37+ weeks), membrane rupture is normal and expected
-8. CRITICAL - Incomplete documentation:
+10. CRITICAL - Incomplete documentation:
    - If records only document through a certain week (e.g., "records through 35 weeks") but don't include delivery records, this is INCOMPLETE
    - Missing delivery/postpartum records should be noted as a documentation gap
    - This affects clinic approval likelihood even if no complications are documented
@@ -95,7 +102,7 @@ Return a JSON object with this EXACT structure:
     ]
   },
   "medicalConditions": [
-    "<pregnancy_hypertension|hypertension|gestational_diabetes|preeclampsia|diabetes|thyroid_disorder|asthma|etc>"
+    "<ONLY confirmed ACTIVE chronic conditions - NOT family history, NOT ruled out, NOT past resolved conditions. Examples: pregnancy_hypertension|hypertension|gestational_diabetes|preeclampsia|diabetes|thyroid_disorder|asthma. IMPORTANT: If a condition is only mentioned in context like 'denies', 'no history of', 'family history', 'r/o' (rule out), or monitoring/screening - DO NOT include it>"
   ],
   "surgicalHistory": [
     "<procedures like cholecystectomy, tubal ligation, appendectomy, etc>"
