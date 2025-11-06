@@ -655,98 +655,6 @@ function App() {
             </button>
           </div>
 
-          {/* AI Settings Collapsible */}
-          <div style={{ padding: '0 12px', marginBottom: '20px' }}>
-            <button
-              onClick={() => setShowClaudeSettings(!showClaudeSettings)}
-              style={{
-                width: '100%',
-                backgroundColor: darkTeal,
-                color: 'white',
-                border: 'none',
-                borderRadius: '12px',
-                padding: '12px 20px',
-                fontSize: '14px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '8px'
-              }}
-            >
-              <span>⚙️</span>
-              <span>AI Parser Settings</span>
-            </button>
-
-            {showClaudeSettings && (
-              <div style={{ backgroundColor: '#f9fafb', padding: '15px', borderRadius: '8px', marginTop: '10px', border: '1px solid #e5e7eb' }}>
-                <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: darkTeal }}>Advanced Medical Record Parsing</h4>
-                <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '10px' }}>
-                  For complex medical records, enable AI-powered parsing to accurately extract pregnancy history, complications, and medical conditions from clinical notes.
-                </p>
-                <div style={{ marginBottom: '10px' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', fontSize: '13px', cursor: 'pointer' }}>
-                    <input
-                      type="checkbox"
-                      checked={useClaudeParser}
-                      onChange={(e) => handleParserToggle(e.target.checked)}
-                      style={{ marginRight: '8px' }}
-                    />
-                    Enable AI Medical Record Parser
-                  </label>
-                </div>
-                {useClaudeParser && (
-                  <div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                      <label style={{ fontSize: '12px', color: '#374151', fontWeight: '500' }}>
-                        API Key:
-                      </label>
-                      {claudeApiKey && (
-                        <button
-                          onClick={() => handleApiKeyChange('')}
-                          style={{
-                            fontSize: '11px',
-                            color: rubyRed,
-                            background: 'none',
-                            border: 'none',
-                            cursor: 'pointer',
-                            textDecoration: 'underline'
-                          }}
-                        >
-                          Clear
-                        </button>
-                      )}
-                    </div>
-                    <input
-                      type="password"
-                      value={claudeApiKey}
-                      onChange={(e) => handleApiKeyChange(e.target.value)}
-                      placeholder=""
-                      style={{
-                        width: '100%',
-                        padding: '6px 8px',
-                        fontSize: '12px',
-                        border: '1px solid #d1d5db',
-                        borderRadius: '4px',
-                        marginTop: '4px'
-                      }}
-                    />
-                    <p style={{ fontSize: '11px', color: '#6b7280', marginTop: '6px', marginBottom: '0' }}>
-                      Get your API key from{' '}
-                      <a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer" style={{ color: darkTeal }}>
-                        console.anthropic.com
-                      </a>
-                    </p>
-                    <div style={{ fontSize: '11px', color: '#059669', marginTop: '8px', padding: '6px 8px', backgroundColor: '#d1fae5', borderRadius: '4px', border: '1px solid #10b981' }}>
-                      ✓ HIPAA Compliant: Patient names and dates are automatically de-identified before AI processing
-                    </div>
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-
           <div className="input-section">
             <div className="text-input-section">
               {/* Section Header - matches NeoNearBy style */}
@@ -881,6 +789,98 @@ function App() {
                 >
                   Reset
                 </button>
+              </div>
+
+              {/* AI Settings Collapsible - Moved to bottom */}
+              <div style={{ marginTop: '20px' }}>
+                <button
+                  onClick={() => setShowClaudeSettings(!showClaudeSettings)}
+                  style={{
+                    width: '100%',
+                    backgroundColor: darkTeal,
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '12px',
+                    padding: '12px 20px',
+                    fontSize: '14px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '8px'
+                  }}
+                >
+                  <span>⚙️</span>
+                  <span>AI Parser Settings</span>
+                </button>
+
+                {showClaudeSettings && (
+                  <div style={{ backgroundColor: '#f9fafb', padding: '15px', borderRadius: '8px', marginTop: '10px', border: '1px solid #e5e7eb' }}>
+                    <h4 style={{ margin: '0 0 10px 0', fontSize: '14px', color: darkTeal }}>Advanced Medical Record Parsing</h4>
+                    <p style={{ fontSize: '12px', color: '#6b7280', marginBottom: '10px' }}>
+                      For complex medical records, enable AI-powered parsing to accurately extract pregnancy history, complications, and medical conditions from clinical notes.
+                    </p>
+                    <div style={{ marginBottom: '10px' }}>
+                      <label style={{ display: 'flex', alignItems: 'center', fontSize: '13px', cursor: 'pointer' }}>
+                        <input
+                          type="checkbox"
+                          checked={useClaudeParser}
+                          onChange={(e) => handleParserToggle(e.target.checked)}
+                          style={{ marginRight: '8px' }}
+                        />
+                        Enable AI Medical Record Parser
+                      </label>
+                    </div>
+                    {useClaudeParser && (
+                      <div>
+                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                          <label style={{ fontSize: '12px', color: '#374151', fontWeight: '500' }}>
+                            API Key:
+                          </label>
+                          {claudeApiKey && (
+                            <button
+                              onClick={() => handleApiKeyChange('')}
+                              style={{
+                                fontSize: '11px',
+                                color: rubyRed,
+                                background: 'none',
+                                border: 'none',
+                                cursor: 'pointer',
+                                textDecoration: 'underline'
+                              }}
+                            >
+                              Clear
+                            </button>
+                          )}
+                        </div>
+                        <input
+                          type="password"
+                          value={claudeApiKey}
+                          onChange={(e) => handleApiKeyChange(e.target.value)}
+                          placeholder=""
+                          style={{
+                            width: '100%',
+                            padding: '6px 8px',
+                            fontSize: '12px',
+                            border: '1px solid #d1d5db',
+                            borderRadius: '4px',
+                            marginTop: '4px'
+                          }}
+                        />
+                        <p style={{ fontSize: '11px', color: '#6b7280', marginTop: '6px', marginBottom: '0' }}>
+                          Get your API key from{' '}
+                          <a href="https://console.anthropic.com/" target="_blank" rel="noopener noreferrer" style={{ color: darkTeal }}>
+                            console.anthropic.com
+                          </a>
+                        </p>
+                        <div style={{ fontSize: '11px', color: '#059669', marginTop: '8px', padding: '6px 8px', backgroundColor: '#d1fae5', borderRadius: '4px', border: '1px solid #10b981' }}>
+                          ✓ HIPAA Compliant: Patient names and dates are automatically de-identified before AI processing
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
 
               {/* MFM Alert */}

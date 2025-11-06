@@ -180,7 +180,7 @@ body {
 }
 
 .app-header {
-  text-align: center;
+  text-align: left; /* Left align to match logo */
   background: white;
   color: #333;
   padding: 20px;
@@ -190,9 +190,10 @@ body {
 .header-logo {
   max-width: 320px;
   width: auto;
-  height: auto;
+  height: 160px; /* Match NICUNearby logo height (h-40 = 160px) */
+  object-fit: contain;
   display: block;
-  margin: 0 auto;
+  margin: 0; /* Left align instead of center */
 }
 
 .app-header h1 {
