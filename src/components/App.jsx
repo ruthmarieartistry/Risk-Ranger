@@ -88,36 +88,21 @@ function App() {
           console.log('claudeApiKey length:', claudeApiKey?.length);
           console.log('Will use Claude?', useClaudeParser && claudeApiKey);
 
-          if (useClaudeParser && claudeApiKey) {
-            // Use Claude for all medical records (like the old app)
-            console.log('Using Claude parser...');
-            setResults({ loading: true, fileName: file.name, usingClaude: true });
+          // Use cascading parser (Layers 1-3) - same as text analysis
+          console.log('Using cascading parser for file upload...');
+          setResults({ loading: true, fileName: file.name, usingClaude: useClaudeParser && claudeApiKey });
 
-            try {
-              // Pass candidate name for HIPAA de-identification and user-provided data
-              candidateData = await parseWithClaude(
-                result.text,
-                claudeApiKey,
-                candidateName,
-                {
-                  age: candidateAge,
-                  bmi: candidateBMI,
-                  additionalInfo: additionalInfo
-                }
-              );
-              console.log('Claude parsed data:', candidateData);
-            } catch (claudeError) {
-              console.error('Claude parsing failed, falling back to deterministic parser:', claudeError);
-              // Fallback to deterministic parser
-              candidateData = parseTextInput(result.text);
-              console.log('Fallback candidate data:', candidateData);
+          candidateData = await parseMedicalText(result.text, {
+            claudeApiKey: claudeApiKey,
+            useClaudeParser: useClaudeParser,
+            candidateName: candidateName,
+            userProvidedData: {
+              age: candidateAge,
+              bmi: candidateBMI,
+              additionalInfo: additionalInfo
             }
-          } else {
-            // Use deterministic parser
-            console.log('Using deterministic parser...');
-            candidateData = parseTextInput(result.text);
-            console.log('Candidate data:', candidateData);
-          }
+          });
+          console.log('Cascading parser result:', candidateData);
 
           // Extract and analyze the data
           const summary = extractAndSummarize(result.text);
@@ -205,36 +190,21 @@ function App() {
           console.log('claudeApiKey length:', claudeApiKey?.length);
           console.log('Will use Claude?', useClaudeParser && claudeApiKey);
 
-          if (useClaudeParser && claudeApiKey) {
-            // Use Claude for all medical records (like the old app)
-            console.log('Using Claude parser...');
-            setResults({ loading: true, fileName: `${files.length} files`, usingClaude: true });
+          // Use cascading parser (Layers 1-3) - same as text analysis
+          console.log('Using cascading parser for combined files...');
+          setResults({ loading: true, fileName: `${files.length} files`, usingClaude: useClaudeParser && claudeApiKey });
 
-            try {
-              // Pass candidate name for HIPAA de-identification and user-provided data
-              candidateData = await parseWithClaude(
-                combinedText,
-                claudeApiKey,
-                candidateName,
-                {
-                  age: candidateAge,
-                  bmi: candidateBMI,
-                  additionalInfo: additionalInfo
-                }
-              );
-              console.log('Claude parsed data:', candidateData);
-            } catch (claudeError) {
-              console.error('Claude parsing failed, falling back to deterministic parser:', claudeError);
-              // Fallback to deterministic parser
-              candidateData = parseTextInput(combinedText);
-              console.log('Fallback candidate data:', candidateData);
+          candidateData = await parseMedicalText(combinedText, {
+            claudeApiKey: claudeApiKey,
+            useClaudeParser: useClaudeParser,
+            candidateName: candidateName,
+            userProvidedData: {
+              age: candidateAge,
+              bmi: candidateBMI,
+              additionalInfo: additionalInfo
             }
-          } else {
-            // Use deterministic parser
-            console.log('Using deterministic parser...');
-            candidateData = parseTextInput(combinedText);
-            console.log('Candidate data:', candidateData);
-          }
+          });
+          console.log('Cascading parser result:', candidateData);
 
           // Analyze combined text from all files
           const summary = extractAndSummarize(combinedText);
