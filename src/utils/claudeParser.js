@@ -112,10 +112,10 @@ Return a JSON object with this EXACT structure:
 Return ONLY the JSON object, no other text.`;
 
   try {
-    console.log('🔵 Calling /api/claude serverless function...');
+    console.log('🔵 Calling /api/parse serverless function...');
 
     // Call Vercel serverless function (keeps API key secure on server)
-    const response = await fetch('/api/claude', {
+    const response = await fetch('/api/parse', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
