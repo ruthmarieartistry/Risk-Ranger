@@ -303,6 +303,21 @@ body {
   }
 }
 
+/* Hide sidebar when in narrow iframe (for embedding in Zoho Creator) */
+@media (max-width: 900px) {
+  .sidebar {
+    display: none !important;
+  }
+
+  .main-content {
+    padding: 0;
+  }
+
+  .app-container {
+    flex-direction: column;
+  }
+}
+
 .app-header {
   text-align: left;
   background: white;
