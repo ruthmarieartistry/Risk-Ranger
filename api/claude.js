@@ -1,5 +1,6 @@
 // Vercel serverless function to proxy Claude API calls
 // Keeps API key secure on server side
+// Updated: 2025-01-06 - Using Claude 3 Sonnet
 
 export default async function handler(req, res) {
   // Only allow POST requests
