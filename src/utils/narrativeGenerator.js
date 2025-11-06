@@ -18,10 +18,7 @@ import { getRiskFactorInfo } from '../data/riskFactorDatabase.js';
  *   summaryOfFindings: string
  * }
  */
-export async function generateClinicalNarratives(candidateData, assessmentResults, apiKey) {
-  if (!apiKey || apiKey.trim() === '') {
-    throw new Error('Claude API key is required for narrative generation');
-  }
+export async function generateClinicalNarratives(candidateData, assessmentResults) {
 
   // Prepare data for Claude
   const candidateName = candidateData.name || 'The candidate';
@@ -97,35 +94,38 @@ Generate four distinct narrative sections. Write in a professional, clinical ton
 Return ONLY the JSON object, no other text. Use the candidate's actual name (${candidateName}) in the narratives.`;
 
   try {
-    // Call via Netlify Function (solves CORS)
-    const response = await fetch('/.netlify/functions/claude', {
+    console.log('🔵 Calling /api/narratives serverless function...');
+
+    // Call Vercel serverless function (keeps API key secure on server)
+    const response = await fetch('/api/narratives', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        apiKey: apiKey,
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
-        messages: [{ role: 'user', content: prompt }]
+        candidateData: candidateData,
+        assessmentResults: assessmentResults
       })
     });
 
+    console.log('🔵 Narratives response status:', response.status);
+
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Claude API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+      console.error('🔴 Narratives API error:', errorData);
+      throw new Error(`Narratives API error: ${response.status} - ${JSON.stringify(errorData)}`);
     }
 
-    const data = await response.json();
-    const content = data.content[0].text;
+    const result = await response.json();
+    console.log('🔵 Narratives result:', result);
 
-    // Extract JSON from response (in case Claude added any preamble)
-    const jsonMatch = content.match(/\{[\s\S]*\}/);
-    if (!jsonMatch) {
-      throw new Error('Failed to extract JSON from Claude response');
+    if (!result.success) {
+      console.error('🔴 Narratives API returned unsuccessful');
+      throw new Error('Narratives API returned unsuccessful response');
     }
 
-    const narratives = JSON.parse(jsonMatch[0]);
+    const narratives = result.narratives;
+    console.log('✅ Narratives generation successful!');
 
     // Validate structure
     if (!narratives.situationSummary || !narratives.conditionInteractions || !narratives.clinicRationales) {
