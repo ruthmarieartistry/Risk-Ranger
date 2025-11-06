@@ -9,9 +9,8 @@
 import { deidentifyText } from './deidentify.js';
 
 /**
- * Parse medical records using Claude API
+ * Parse medical records using Claude API (via Vercel serverless function)
  * @param {string} medicalRecordText - Raw text from medical records
- * @param {string} apiKey - Anthropic API key
  * @param {string} patientName - Patient name for de-identification (optional)
  * @param {Object} userProvidedData - User-entered demographic and additional info (optional)
  * @param {string} userProvidedData.age - Candidate's age
@@ -19,10 +18,7 @@ import { deidentifyText } from './deidentify.js';
  * @param {string} userProvidedData.additionalInfo - Additional medical information or questions
  * @returns {Promise<Object>} Structured candidate data
  */
-export async function parseWithClaude(medicalRecordText, apiKey, patientName = '', userProvidedData = {}) {
-  if (!apiKey || apiKey.trim() === '') {
-    throw new Error('Claude API key is required');
-  }
+export async function parseWithClaude(medicalRecordText, patientName = '', userProvidedData = {}) {
 
   // HIPAA: De-identify medical record text before sending to Claude
   const deidentifiedText = deidentifyText(medicalRecordText, patientName);
@@ -116,39 +112,31 @@ Return a JSON object with this EXACT structure:
 Return ONLY the JSON object, no other text.`;
 
   try {
-    // Call Claude API directly (Vercel deployment - no Netlify functions)
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    // Call Vercel serverless function (keeps API key secure on server)
+    const response = await fetch('/api/claude', {
       method: 'POST',
       headers: {
-        'Content-Type': 'application/json',
-        'x-api-key': apiKey,
-        'anthropic-version': '2023-06-01'
+        'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 2000,
-        messages: [
-          {
-            role: 'user',
-            content: prompt
-          }
-        ]
+        medicalText: deidentifiedText,
+        candidateName: patientName,
+        userProvidedData: userProvidedData
       })
     });
 
     if (!response.ok) {
       const errorData = await response.json().catch(() => ({}));
-      throw new Error(`Claude API error: ${response.status} - ${errorData.error?.message || 'Unknown error'}`);
+      throw new Error(`Claude API error: ${response.status} - ${errorData.error || 'Unknown error'}`);
     }
 
-    const data = await response.json();
-    let content = data.content[0].text;
+    const result = await response.json();
 
-    // Remove markdown code blocks if present (```json ... ```)
-    content = content.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+    if (!result.success) {
+      throw new Error('Claude API returned unsuccessful response');
+    }
 
-    // Parse the JSON response
-    const parsedData = JSON.parse(content);
+    const parsedData = result.data;
 
     // Validate and clean the data, passing in user-provided age/BMI
     return validateAndCleanParsedData(parsedData, userProvidedData);

@@ -26,8 +26,6 @@ function App() {
   const [showHowToUse, setShowHowToUse] = useState(false);
   const [showMethod, setShowMethod] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState('');
-  // API key from environment variable (set in Vercel dashboard)
-  const claudeApiKey = import.meta.env.VITE_CLAUDE_API_KEY || '';
   const [clinicalNarratives, setClinicalNarratives] = useState(null);
 
   // Brand colors - Alcea Surrogacy Branding
@@ -63,17 +61,12 @@ function App() {
 
           let candidateData;
 
-          // Use Claude if enabled and API key is present
-          console.log('claudeApiKey length:', claudeApiKey?.length);
-          console.log('Will use Claude? true (hardcoded API key)');
-
           // Use cascading parser (Layers 1-3) - same as text analysis
           console.log('Using cascading parser for file upload...');
           setResults({ loading: true, fileName: file.name, usingClaude: true });
 
           candidateData = await parseMedicalText(result.text, {
-            claudeApiKey: claudeApiKey,
-            useClaudeParser: true, // Always use Claude if API key is present
+            useClaudeParser: true, // Always use Claude (API key on server)
             candidateName: candidateName,
             userProvidedData: {
               age: candidateAge,
@@ -101,20 +94,13 @@ function App() {
           console.log('Candidate data:', candidateData);
 
           // Generate clinical narratives using Claude
-          if (claudeApiKey) { // Always use Claude (hardcoded API key)
-            console.log('Generating clinical narratives with Claude...');
-            try {
-              const narratives = await generateClinicalNarratives(candidateData, assessment, claudeApiKey);
-              setClinicalNarratives(narratives);
-              console.log('Clinical narratives generated:', narratives);
-            } catch (narrativeError) {
-              console.error('Failed to generate narratives with Claude, using fallback:', narrativeError);
-              const fallbackNarratives = generateFallbackNarratives(candidateData, assessment);
-              setClinicalNarratives(fallbackNarratives);
-            }
-          } else {
-            // Use fallback narratives if Claude is not enabled
-            console.log('Using fallback narratives...');
+          console.log('Generating clinical narratives with Claude...');
+          try {
+            const narratives = await generateClinicalNarratives(candidateData, assessment);
+            setClinicalNarratives(narratives);
+            console.log('Clinical narratives generated:', narratives);
+          } catch (narrativeError) {
+            console.error('Failed to generate narratives with Claude, using fallback:', narrativeError);
             const fallbackNarratives = generateFallbackNarratives(candidateData, assessment);
             setClinicalNarratives(fallbackNarratives);
           }
@@ -164,17 +150,12 @@ function App() {
         if (successCount > 0) {
           let candidateData;
 
-          // Use Claude if enabled and API key is present
-          console.log('claudeApiKey length:', claudeApiKey?.length);
-          console.log('Will use Claude? true (hardcoded API key)');
-
           // Use cascading parser (Layers 1-3) - same as text analysis
           console.log('Using cascading parser for combined files...');
           setResults({ loading: true, fileName: `${files.length} files`, usingClaude: true });
 
           candidateData = await parseMedicalText(combinedText, {
-            claudeApiKey: claudeApiKey,
-            useClaudeParser: true, // Always use Claude if API key is present
+            useClaudeParser: true, // Always use Claude (API key on server)
             candidateName: candidateName,
             userProvidedData: {
               age: candidateAge,
@@ -196,15 +177,11 @@ function App() {
           setResults(assessment);
 
           // Generate clinical narratives
-          if (claudeApiKey) { // Always use Claude (hardcoded API key)
-            try {
-              const narratives = await generateClinicalNarratives(candidateData, assessment, claudeApiKey);
-              setClinicalNarratives(narratives);
-            } catch (narrativeError) {
-              console.error('Failed to generate narratives, using fallback:', narrativeError);
-              setClinicalNarratives(generateFallbackNarratives(candidateData, assessment));
-            }
-          } else {
+          try {
+            const narratives = await generateClinicalNarratives(candidateData, assessment);
+            setClinicalNarratives(narratives);
+          } catch (narrativeError) {
+            console.error('Failed to generate narratives, using fallback:', narrativeError);
             setClinicalNarratives(generateFallbackNarratives(candidateData, assessment));
           }
 
@@ -257,13 +234,12 @@ function App() {
 
       // Use cascading parser (Layers 1-3)
       const candidateData = await parseMedicalText(textInput, {
-        claudeApiKey: claudeApiKey,
         candidateName: candidateName,
         userProvidedData: {
           age: candidateAge,
           bmi: candidateBMI
         },
-        useClaudeParser: true // Always use Claude if API key is present
+        useClaudeParser: true // Always use Claude (API key on server)
       });
 
       candidateData.name = candidateName || 'The candidate';
@@ -294,15 +270,11 @@ function App() {
       setResults(assessment);
 
       // Generate clinical narratives
-      if (useClaudeParser && claudeApiKey) {
-        try {
-          const narratives = await generateClinicalNarratives(candidateData, assessment, claudeApiKey);
-          setClinicalNarratives(narratives);
-        } catch (narrativeError) {
-          console.error('Failed to generate narratives, using fallback:', narrativeError);
-          setClinicalNarratives(generateFallbackNarratives(candidateData, assessment));
-        }
-      } else {
+      try {
+        const narratives = await generateClinicalNarratives(candidateData, assessment);
+        setClinicalNarratives(narratives);
+      } catch (narrativeError) {
+        console.error('Failed to generate narratives, using fallback:', narrativeError);
         setClinicalNarratives(generateFallbackNarratives(candidateData, assessment));
       }
 

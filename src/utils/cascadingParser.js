@@ -35,15 +35,13 @@ import { parseWithClaude, shouldUseClaude } from './claudeParser.js';
  * Parse medical text using cascading parser system
  * @param {string} text - Medical record text to parse
  * @param {Object} options - Parser options
- * @param {string} options.claudeApiKey - Claude API key (optional)
  * @param {string} options.candidateName - Candidate name for de-identification (optional)
  * @param {Object} options.userProvidedData - User-entered data (age, BMI, etc.)
- * @param {boolean} options.useClaudeParser - Whether to use Claude (default: true if API key provided)
+ * @param {boolean} options.useClaudeParser - Whether to use Claude (default: true)
  * @returns {Promise<Object>} Parsed candidate data with confidence scores
  */
 export async function parseMedicalText(text, options = {}) {
   const {
-    claudeApiKey = '',
     candidateName = '',
     userProvidedData = {},
     useClaudeParser = true
@@ -87,12 +85,12 @@ export async function parseMedicalText(text, options = {}) {
   let claudeData = null;
   let claudeSuccess = false;
 
-  if (useClaudeParser && claudeApiKey && claudeApiKey.trim() !== '') {
+  if (useClaudeParser) {
     console.log('🤖 Layer 3: Running Claude AI parser...');
     const startLayer3 = Date.now();
 
     try {
-      claudeData = await parseWithClaude(text, claudeApiKey, candidateName, userProvidedData);
+      claudeData = await parseWithClaude(text, candidateName, userProvidedData);
       claudeSuccess = true;
       const layer3Time = Date.now() - startLayer3;
 
@@ -106,7 +104,7 @@ export async function parseMedicalText(text, options = {}) {
       console.error('⚠️ Layer 3 failed, using Layers 1+2 only:', error.message);
     }
   } else {
-    console.log('⏭️ Layer 3 skipped (Claude disabled or no API key)');
+    console.log('⏭️ Layer 3 skipped (Claude disabled)');
   }
 
   // Calculate final confidence score
