@@ -735,8 +735,13 @@ function App() {
                 />
               </div>
 
+              {/* "and/or" separator */}
+              <div style={{ textAlign: 'center', margin: '15px 0', fontSize: '14px', fontWeight: '500', color: '#6b7280' }}>
+                and/or
+              </div>
+
               {/* Medical Records Upload */}
-              <div className="upload-section" style={{ marginTop: '15px' }}>
+              <div className="upload-section">
                 <input
                   type="file"
                   id="file-upload"
@@ -746,7 +751,7 @@ function App() {
                   style={{ display: 'none' }}
                 />
                 <label htmlFor="file-upload" className="btn-upload">
-                  📄 and/or Upload Pregnancy Records (Auto-Analyzes)
+                  📄 Upload Pregnancy Records (Auto-Analyzes)
                 </label>
                 {uploadedFileName && (
                   <span className="uploaded-file-name">
