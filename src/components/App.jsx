@@ -12,6 +12,7 @@ import { parseWithClaude, shouldUseClaude } from '../utils/claudeParser.js';
 import { generatePDFReport } from '../utils/pdfGenerator.js';
 import { generateClinicalNarratives, generateFallbackNarratives } from '../utils/narrativeGenerator.js';
 import { getRiskFactorInfo, getRiskLevelBadge } from '../data/riskFactorDatabase.js';
+import MFMemo from './MFMemo.jsx';
 
 function App() {
   const [inputMode, setInputMode] = useState('text'); // 'text' or 'structured'
@@ -26,6 +27,7 @@ function App() {
   const [showGlossary, setShowGlossary] = useState(false);
   const [showHowToUse, setShowHowToUse] = useState(false);
   const [showMethod, setShowMethod] = useState(false);
+  const [showMFMemo, setShowMFMemo] = useState(false);
   const [uploadedFileName, setUploadedFileName] = useState('');
   const [clinicalNarratives, setClinicalNarratives] = useState(null);
 
@@ -530,7 +532,7 @@ function App() {
           </div>
 
           {/* Action Buttons Row - matches NeoNearBy */}
-          <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', padding: '0 12px' }}>
+          <div style={{ display: 'flex', gap: '12px', marginBottom: '20px', padding: '0 12px', flexWrap: 'wrap' }}>
             <button
               onClick={() => setShowHowToUse(true)}
               style={{
@@ -551,6 +553,32 @@ function App() {
             >
               <span>❓</span>
               <span>How To Use</span>
+            </button>
+
+            <button
+              onClick={() => {
+                setShowMFMemo(!showMFMemo);
+                setShowMethod(false);
+                setShowHowToUse(false);
+              }}
+              style={{
+                flex: 1,
+                backgroundColor: showMFMemo ? rubyRed : darkTeal,
+                color: 'white',
+                border: 'none',
+                borderRadius: '12px',
+                padding: '12px 20px',
+                fontSize: '14px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '8px'
+              }}
+            >
+              <span>🏥</span>
+              <span>MFMemo</span>
             </button>
 
             <button
@@ -1211,6 +1239,20 @@ function App() {
                   <li>All surrogacy decisions must be made with qualified medical professionals</li>
                 </ul>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+      {/* MFMemo Modal */}
+      {showMFMemo && (
+        <div className="modal-overlay" onClick={() => setShowMFMemo(false)}>
+          <div className="modal-content" style={{ maxWidth: '1000px', width: '95%' }} onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h2 style={{ color: darkTeal }}>🏥 MFMemo - MFM Report Analyzer</h2>
+              <button onClick={() => setShowMFMemo(false)} className="modal-close">×</button>
+            </div>
+            <div className="modal-body" style={{ padding: 0 }}>
+              <MFMemo />
             </div>
           </div>
         </div>
